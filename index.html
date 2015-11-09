@@ -1,10 +1,19 @@
-<html>
+<!DOCTYPE html>
+<html lang="en" ng-app="homePage">
 <head>
-  <title>Michael Homepage</title>
+  <meta charset="UTF-8">
+  <title>Michael's Homepage</title>
+  <link href="css/main.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
 </head>
 <body>
-  <div>
-    Hello
-  </div>
+<script src="includes/angular.min.js"></script>
+<script src="includes/angular-route.min.js"></script>
+<script src="includes/moment.js"></script>
+<script src="includes/require.min.js"></script>
+<script src="app.js"></script>
+
+<div ng-view></div>
+
 </body>
 </html>
