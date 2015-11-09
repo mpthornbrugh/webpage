@@ -9,6 +9,10 @@ angular.module('homePage.home', ['ngRoute'])
 		});
 	}])
 
-	.controller('HomeViewCtrl', ['$scope', function ($scope) {
-
+	.controller('HomeViewCtrl', ['$scope', '$window', function ($scope, $window) {
+		$scope.goto = function (where) {
+			if (where == 'database') {
+				$window.location.href = 'database_entry/index.html';
+			}
+		}
 	}]);
