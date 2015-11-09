@@ -1,0 +1,65 @@
+<h1>Add to Database</h1>
+
+<!--
+Database Columns
+id      Not from here (auto increment)
+who
+what
+when
+where
+image
+link
+video
+category
+rating  (Not sure if we want to do rating of 1-3 or have ratings be unique. i.e. drag and drop order all events)
+				(Could do a multi tier rating organization. Have them labeled as 1-3 and then within their tiers organized.)
+-->
+
+<form>
+	<div class="form-group">
+		<input ng-model="who" type="text" class="form-control" id="databaseWho" placeholder="Who" required>
+	</div>
+	<div class="form-group">
+		<textarea ng-model="what" class="form-control" rows="4" placeholder="Did What" required></textarea>
+	</div>
+	<div class="form-group">
+		<input ng-model="when" type="datetime-local" class="form-control" id="databaseWhen" placeholder="When" required>
+	</div>
+	<!--
+	TODO: Convert this to use location selector
+	http://logicify.github.io/jquery-locationpicker-plugin/
+	-->
+	<div class="form-group">
+		<textarea ng-model="where" class="form-control" rows="4" placeholder="And Where" required></textarea>
+	</div>
+	<div class="form-group">
+		<select ng-model="significance" class="form-control" required>
+			<option value="" disabled selected>Significance of Event</option>
+			<option value=1>Trivial</option>
+			<option value=2>Average</option>
+			<option value=3>Significant</option>
+		</select>
+	</div>
+	<!--<div class="form-group">-->
+		<!--<input ng-model="link" type="text" class="form-control" placeholder="Link (Optional)">-->
+	<!--</div>-->
+	<!--&lt;!&ndash;-->
+	<!--TODO: Once we start using these links we need to make them work-->
+	<!--http://stackoverflow.com/questions/19836015/youtube-url-in-video-tag-->
+	<!--http://mediaelementjs.com/examples/?name=youtube-->
+	<!--TODO: Maybe also allow people to upload a video themselves (like the images)-->
+	<!--&ndash;&gt;-->
+	<!--<div class="form-group">-->
+		<!--<input ng-model="video" type="text" class="form-control" placeholder="Youtube Link (Optional)">-->
+	<!--</div>-->
+	<!--&lt;!&ndash;-->
+	<!--TODO: Add the ability for an image to be a url-->
+	<!--&ndash;&gt;-->
+	<!--<div class="form-group">-->
+		<!--<label for="imageInput">Image (optional)</label>-->
+		<!--<input ng-model="image" type="file" id="imageInput" class="form-control">-->
+	<!--</div>-->
+	<button ng-click="add()" type="submit" class="btn btn-primary btn-block">Submit</button>
+	<button ng-click="goto('list')" type="submit" class="btn btn-primary btn-block">Go to List</button>
+	<!--<button type="button" class="btn btn-primary btn-block" ng-click="goto('add')">Add More Classifications</button>-->
+</form>

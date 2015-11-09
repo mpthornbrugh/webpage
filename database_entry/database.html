@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="databaseEntry">
+<head>
+	<meta charset="UTF-8">
+	<title>Database Entry</title>
+	<style>
+		body, html{
+			height:100%;
+			width:100%;
+			margin:0;
+			padding:0;
+			display:table;
+			font-size: 20px;
+		}
+	</style>
+	<link rel="stylesheet" href="../css/bootstrap.min.css">
+	<link rel="stylesheet" href="../css/database.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+</head>
+<body>
+<script src="../includes/angular.min.js"></script>
+<script src="../includes/angular.min.js"></script>
+<script src="../bower_components/angular-route/angular-route.js"></script>
+<script src="../bower_components/jquery/dist/jquery.min.js"></script>
+<script src="../includes/moment.js"></script>
+<script src="app.js"></script>
+<script src="database.js"></script>
+<script src="allItems.js"></script>
+<script src="detail.js"></script>
+<script src="database_service.js"></script>
+
+<div id="loading-spinner" class="se-pre-con"></div>
+
+<div ng-view></div>
+
+</body>
+</html>
