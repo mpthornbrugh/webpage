@@ -47,7 +47,7 @@ angular.module('databaseEntry.detail', ['ngRoute'])
 
 		$scope.deleteItem = function (id) {
 			DatabaseControlService.removeItem(id).then(function (data) {
-				$path.location('/list');
+				$location.path('/list');
 			});
 		};
 
