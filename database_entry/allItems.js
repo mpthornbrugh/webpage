@@ -16,6 +16,10 @@ angular.module('databaseEntry.list', ['ngRoute'])
 		DatabaseControlService.ensureDataPopulated().then(function () {
 			$scope.items = DatabaseControlService.getItems();
 			$(".se-pre-con").fadeOut("slow");
+
+			for (var i in $scope.items) {
+				$scope.items[i].when =  moment($scope.items[i].when).format('MMMM Do YYYY, h:mm:ss a');
+			}
 		});
 
 		$scope.goto = function (where) {
