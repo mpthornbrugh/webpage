@@ -63,7 +63,7 @@ h1 {
 	height: 30px;
 	text-align: start;
 	border-right: 1px solid gray;
-	overflow-x: scroll;
+	overflow-x: hidden;
 }
 
 .se-pre-con {
