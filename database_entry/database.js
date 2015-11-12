@@ -20,7 +20,7 @@ angular.module('databaseEntry.view', ['ngRoute'])
 		};
 
 		$scope.add = function () {
-			if (!$scope.who || !$scope.what || !$scope.when || !$scope.where || !$scope.significance) {
+			if (!$scope.who || !$scope.what || !$scope.when || !$scope.where || !$scope.ranking) {
 				return;
 			}
 
