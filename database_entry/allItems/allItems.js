@@ -4,7 +4,7 @@ angular.module('databaseEntry.list', ['ngRoute'])
 
 	.config(['$routeProvider', function ($routeProvider) {
 		$routeProvider.when('/list', {
-			templateUrl: 'allItems.html',
+			templateUrl: 'allItems/allItems.html',
 			controller: 'ListCtrl'
 		});
 	}])
