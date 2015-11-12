@@ -16,7 +16,7 @@ angular.module('databaseEntry.detail', ['ngRoute'])
 		//Make sure that the initial data is populated.
 		DatabaseControlService.ensureDataPopulated().then(function () {
 			$scope.item = DatabaseControlService.getItemByIndex(itemId);
-			$scope.item.when = new Date($scope.item.when);
+			$scope.when = new Date($scope.item.when);
 			$(".se-pre-con").fadeOut("slow");
 		});
 
@@ -25,11 +25,11 @@ angular.module('databaseEntry.detail', ['ngRoute'])
 		};
 
 		$scope.updateItem = function (id) {
-			if (!$scope.item.who || !$scope.item.what || !$scope.item.when || !$scope.item.where || !$scope.item.ranking) {
+			if (!$scope.item.who || !$scope.item.what || !$scope.when || !$scope.item.where || !$scope.item.ranking) {
 				return;
 			}
 
-			var when = $scope.item.when.toDateString();
+			var when = $scope.when.toDateString();
 
 			//TODO: Instead of replacing all ' with / try encodeURIComponent and then decodeURIComponent when it's used
 			var updateItem = {
