@@ -24,15 +24,15 @@ angular.module('databaseEntry.view', ['ngRoute'])
 				return;
 			}
 
-			var when = $scope.when.toString();
-			when = when.substr(0, when.length - 15);
+			var when = $scope.when.toDateString();
 
+			//TODO: Instead of replacing all ' with / try encodeURIComponent and then decodeURIComponent when it's used
 			var addItem = {
 				who: $scope.who.replace("'", "/"),
 				what: $scope.what.replace("'", "/"),
 				when: when,
 				where: $scope.where.replace("'", "/"),
-				ranking: $scope.significance
+				ranking: $scope.ranking
 			};
 
 			DatabaseControlService.addItem(addItem).then(function () {
