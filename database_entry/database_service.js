@@ -5,6 +5,7 @@ angular.module('databaseEntry.service', ['ngRoute'])
 
 		var apiUrl = "https://historicaldv.herokuapp.com/";
 		var allItems = [];
+		var queryData = [];
 		var dataPopulatedPromise;
 
 		function populateAllItems() {
@@ -16,6 +17,48 @@ angular.module('databaseEntry.service', ['ngRoute'])
 					alert("Error connecting to server: " + err);
 				});
 		}
+
+		var queryForWhat = function (what) {
+			var request = $http({
+				method: "post",
+				url: apiUrl + "getItemsByWhat",
+				data: {
+					tableName: "links",
+					what: what
+				}
+			});
+
+			request.success(function (data) {
+				queryData = data;
+			});
+
+			request.error(function (err) {
+				queryData = [];
+			});
+
+			return request;
+		};
+
+		var queryForWho = function (who) {
+			var request = $http({
+				method: "post",
+				url: apiUrl + "getItemsByWho",
+				data: {
+					tableName: "links",
+					who: who
+				}
+			});
+
+			request.success(function (data) {
+				queryData = data;
+			});
+
+			request.error(function (err) {
+				queryData = [];
+			});
+
+			return request;
+		};
 
 		var addItem = function (newItem) {
 			var request = $http({
@@ -74,6 +117,10 @@ angular.module('databaseEntry.service', ['ngRoute'])
 			return allItems;
 		};
 
+		var getQueryItems = function () {
+			return queryData;
+		};
+
 		var ensureDataPopulated = function () {
 			if (!dataPopulatedPromise) {
 				dataPopulatedPromise = populateAllItems();
@@ -117,9 +164,12 @@ angular.module('databaseEntry.service', ['ngRoute'])
 		return {
 			addItem:        addItem,
 			getItems:       getItems,
+			getQueryItems: getQueryItems,
 			removeItem:     removeItem,
 			getItemByIndex: getItemByIndex,
 			updateItem:     updateItem,
-			ensureDataPopulated: ensureDataPopulated
+			ensureDataPopulated: ensureDataPopulated,
+			queryForWho: queryForWho,
+			queryForWhat: queryForWhat
 		};
 	}]);
