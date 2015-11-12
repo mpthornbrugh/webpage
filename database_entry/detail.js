@@ -16,7 +16,7 @@ angular.module('databaseEntry.detail', ['ngRoute'])
 		//Make sure that the initial data is populated.
 		DatabaseControlService.ensureDataPopulated().then(function () {
 			$scope.item = DatabaseControlService.getItemByIndex(itemId);
-			$scope.item.when = moment($scope.item.when)._d;
+			$scope.item.when = new Date($scope.item.when);
 			$(".se-pre-con").fadeOut("slow");
 		});
 
