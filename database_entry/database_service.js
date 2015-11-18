@@ -161,15 +161,36 @@ angular.module('databaseEntry.service', ['ngRoute'])
 			}
 		};
 
+		var writtenQuery = function (query) {
+			var request = $http({
+				method: "post",
+				url: apiUrl + "inputQuery",
+				data: {
+					query:query
+				}
+			});
+
+			request.success(function (data) {
+				queryData = data;
+			});
+
+			request.error(function (err) {
+				alert("Error connecting to the server.");
+			});
+
+			return request;
+		};
+
 		return {
-			addItem:        addItem,
-			getItems:       getItems,
-			getQueryItems: getQueryItems,
-			removeItem:     removeItem,
-			getItemByIndex: getItemByIndex,
-			updateItem:     updateItem,
-			ensureDataPopulated: ensureDataPopulated,
-			queryForWho: queryForWho,
-			queryForWhat: queryForWhat
+			addItem:              addItem,
+			getItems:             getItems,
+			getQueryItems:        getQueryItems,
+			removeItem:           removeItem,
+			getItemByIndex:       getItemByIndex,
+			updateItem:           updateItem,
+			ensureDataPopulated:  ensureDataPopulated,
+			queryForWho:          queryForWho,
+			queryForWhat:         queryForWhat,
+			writtenQuery:         writtenQuery
 		};
 	}]);
