@@ -75,3 +75,7 @@ h1 {
 	z-index: 9999;
 	background: url(../database_entry/images/Preloader_3.gif) center no-repeat #fff;
 }
+
+.allListContainer {
+	overflow: auto;
+}

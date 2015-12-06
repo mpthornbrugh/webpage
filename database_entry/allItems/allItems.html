@@ -6,7 +6,7 @@
 	<div class="input-group-addon" style="width:38px"><i class="fa fa-search"></i></div>
 </div>
 
-<div>
+<div class="allListContainer" id="allListContainer">
 	<div class="list-item" ng-repeat="item in items | orderBy:'who' | filter:query" ng-click="goToDetail(item.id)">
 		<div class="section">
 			Who: {{item.who}}

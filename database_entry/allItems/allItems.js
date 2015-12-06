@@ -26,4 +26,19 @@ angular.module('databaseEntry.list', ['ngRoute'])
 			$location.path("/detail/" + id);
 		};
 
+		var list = document.getElementById("allListContainer");
+		var html = document.documentElement;
+
+		var height = html.clientHeight;
+		var width = html.clientWidth;
+
+		list.setAttribute("style", "height:" + (height - 70) + "px;");
+
+		window.onresize = function () {
+			height = html.clientHeight;
+			width = html.clientWidth;
+
+			list.setAttribute("style", "height:" + (height - 70) + "px;");
+		};
+
 	}]);
