@@ -1,0 +1,22 @@
+<div id="wholeScreen" class="wholeScreen">
+	<div id="sideBar" class="sideBar">
+		<div class="input-group" style="width:100%;margin-bottom:5px;">
+			<input ng-model="query" type="text" class="form-control" id="query" placeholder="Search People...">
+			<div class="input-group-addon" style="width:38px"><i class="fa fa-search"></i></div>
+		</div>
+		<div class="people-list">
+			<div ng-click="generateTimeline(person)" ng-repeat="person in people | filter: query" class="person-listing">
+				<div class="personImage">
+					<i class="fa fa-user"></i>
+				</div>
+				<div class="personInformation">
+					{{person}}
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="viewContainer" class="viewContainer">
+		<timeline ng-show="currentView == 'timeline'" id="timelineContainer" class="timelineContainer"></timeline>
+		<bubble ng-show="currentView == 'bubble'" id="bubbleContainer" class="bubbleContainer"></bubble>
+	</div>
+</div>

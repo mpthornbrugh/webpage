@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="histViewer">
+<head>
+	<meta charset="UTF-8">
+	<title>Hist Viewer</title>
+	<link href="histViewer.css" rel="stylesheet">
+	<link href="../css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+</head>
+<body>
+<script src="../includes/angular.min.js"></script>
+<script src="../includes/angular-route.min.js"></script>
+<script src="../includes/jquery.min.js"></script>
+<script src="../includes/moment.js"></script>
+<script src="../includes/require.min.js"></script>
+<script src="../includes/ui-bootstrap-tpls-0.13.4.min.js"></script>
+
+<script src="app.js"></script>
+<script src="main/main.js"></script>
+<script src="services/histViewer.service.js"></script>
+
+<div id="loading-spinner" class="se-pre-con"></div>
+
+<div ng-view></div>
+
+</body>
+</html>

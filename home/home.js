@@ -14,5 +14,8 @@ angular.module('homePage.home', ['ngRoute'])
 			if (where == 'database') {
 				$window.location.href = 'database_entry/index.html';
 			}
+			else if (where == 'viewer') {
+				$window.location.href = 'histViewer/index.html';
+			}
 		}
 	}]);
