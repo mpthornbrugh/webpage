@@ -75,7 +75,6 @@ angular.module('databaseEntry.service', ['ngRoute'])
 			});
 
 			request.success(function (data) {
-				console.log(data);
 				populateAllItems();
 			});
 

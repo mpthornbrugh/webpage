@@ -24,6 +24,13 @@ angular.module('databaseEntry.view', ['ngRoute'])
 				return;
 			}
 
+			var partiallySupported = false;
+
+			if ($("#databaseWhen").prop('type') != 'date') {
+				$scope.when = new Date($scope.when);
+				partiallySupported = true;
+			}
+
 			var when = $scope.when.toDateString();
 
 			//TODO: Instead of replacing all ' with / try encodeURIComponent and then decodeURIComponent when it's used
@@ -36,7 +43,12 @@ angular.module('databaseEntry.view', ['ngRoute'])
 			};
 
 			DatabaseControlService.addItem(addItem).then(function () {
-				alert("Success!");
+				if (partiallySupported) {
+					alert("Data successfully added although date is only partially supported. Please go to the list to verify that it saved correctly.");
+				}
+				else {
+					alert("Success!");
+				}
 			});
 		};
 
