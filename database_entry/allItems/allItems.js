@@ -32,13 +32,13 @@ angular.module('databaseEntry.list', ['ngRoute'])
 		var height = html.clientHeight;
 		var width = html.clientWidth;
 
-		list.setAttribute("style", "height:" + (height - 70) + "px;");
+		list.setAttribute("style", "height:" + (height - 105) + "px;");
 
 		window.onresize = function () {
 			height = html.clientHeight;
 			width = html.clientWidth;
 
-			list.setAttribute("style", "height:" + (height - 70) + "px;");
+			list.setAttribute("style", "height:" + (height - 105) + "px;");
 		};
 
 	}]);
