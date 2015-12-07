@@ -33,18 +33,18 @@ angular.module('histViewer.main', ['ngRoute'])
 		$scope.generateTimeline = function (person) {
 			//Need to adjust this when we do multiple timelines
 			isFirstTimeline = true;
-			$("#timelineContainer").empty();
-			$(".se-pre-con").show();
+			$("#timelineContainer").empty(); //Delete any other timelines that are currently shown.
+			$(".se-pre-con").show(); //Show the loading spinner
 			$scope.person = person;
-			DatabaseControlService.queryForWho(person).then(function () {
+			DatabaseControlService.queryForWho(person).then(function () {//Load the data from the person selected
 				var timelineEvents = DatabaseControlService.getQueryItems();
 				createTimeline(timelineEvents);
-				$(".se-pre-con").fadeOut("slow");
+				$(".se-pre-con").fadeOut("slow"); //Hide the loading spinner
 			});
 		};
 
+		//This function takes information that is calculated in the createTimeline function and dynamically adds an event circle and popup
 		function drawEvent (event, yearGap, timelineHeight, minYear, maxYear, blankAreaOnSideOfTimeline) {
-
 			var sectionMinYear;
 			for (var i = minYear; i < maxYear; i += yearGap) {
 				if (moment(event.when).year() >= i) { //
@@ -82,13 +82,14 @@ angular.module('histViewer.main', ['ngRoute'])
 			$("#scrolling-timeline").append(div);
 		}
 
+		//This function draws text on the timeline space centered at the given coordinates
 		function drawText(x, y, text) {
 			var div = '<div style="position:absolute;height:12px;width:30px;font-size:12px;top:' + (y - 6) + 'px;left:' + (x - 15) + 'px;">' + text + '</div>';
 			$("#scrolling-timeline").append(div);
 		}
 
+		//This function draws the lines for the timeline. It has the ability to draw lines between any two given points.
 		function DrawLine(x1, y1, x2, y2) {
-
 			if (y1 < y2) {
 				var pom = y1;
 				y1 = y2;
@@ -125,6 +126,7 @@ angular.module('histViewer.main', ['ngRoute'])
 
 		}
 
+		//This function returns the lowest date out of all of the events.
 		function getMinDate(events) {
 			var minDate;
 			for (var i in events) {
@@ -138,6 +140,7 @@ angular.module('histViewer.main', ['ngRoute'])
 			return minDate;
 		}
 
+		//This function returns the highest date out of all the events.
 		function getMaxDate(events) {
 			var maxDate;
 			for (var i in events) {
@@ -151,6 +154,7 @@ angular.module('histViewer.main', ['ngRoute'])
 			maxDate.add(1, 'years');
 			return maxDate;
 		}
+
 
 		function createTimelineImage(centerX, centerY) {
 			var div = $('<div />', {
@@ -243,6 +247,42 @@ angular.module('histViewer.main', ['ngRoute'])
 				}
 
 				sectionsNeeded = (maxYear - minYear)/yearGap;
+
+				if (sectionsNeeded < 8) {
+					//Expand the timeline
+					switch (yearGap) {
+						case 10:
+							if (sectionsNeeded < 4) { //Need to expand to use the 2 year gap
+								if (sectionsNeeded == 1) { //There were only 1 section need to expand to use the 1 year gap
+									yearGap = 1;
+									sectionsNeeded *= 10;
+								}
+								else {
+									yearGap = 2;
+									sectionsNeeded *= 5;
+								}
+							}
+							else {
+								yearGap = 5;
+								sectionsNeeded *= 2;
+							}
+							break;
+						case 5:
+							if (sectionsNeeded == 1) { //There was only 1 section. Need to expand to use the 1 year gap
+								yearGap = 1;
+								sectionsNeeded *= 5;
+							}
+							else { //The timeline needs to be expanded and use the 2 year gap.
+								yearGap = 2;
+								sectionsNeeded *= (5/2);
+							}
+							break;
+						case 2:
+							sectionsNeeded *= 2;
+							yearGap = 1;
+							break;
+					}
+				}
 
 				var blankAreaOnSideOfTimeline = 30;
 
