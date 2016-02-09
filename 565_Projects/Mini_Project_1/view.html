@@ -1,0 +1,16 @@
+<form>
+	<div class="form-group">
+		<label for="inputPlainText">Plain Text to Decrypt</label>
+		<input type="text" class="form-control" id="inputPlainText" placeholder="Plain Text" ng-model="plaintext">
+	</div>
+	<div class="form-group">
+		<label for="inputKey">Key</label>
+		<input type="text" class="form-control" id="inputKey" placeholder="Key" ng-model="key">
+	</div>
+	<button type="submit" class="btn btn-default" ng-click="encrypt()">Encrypt</button>
+</form>
+<br>
+<div>
+	<label for="encryptedText">Encrypted Text</label>
+	<input type="text" class="form-control" id="encryptedText" ng-model="encryptedText">
+</div>

@@ -17,5 +17,8 @@ angular.module('homePage.home', ['ngRoute'])
 			else if (where == 'viewer') {
 				$window.location.href = 'histViewer/index.html';
 			}
+			else if (where == '565_mini_1') {
+				$window.location.href = '565_Projects/Mini_Project_1/index.html';
+			}
 		}
 	}]);
