@@ -25,23 +25,82 @@ angular.module('histViewer.main', ['ngRoute'])
 		}
 	})
 
-	.controller('MainCtrl', ['$scope', 'DatabaseControlService', function ($scope, DatabaseControlService) {
+	.controller('MainCtrl', ['$scope', 'DatabaseControlService', 'HistoryService', '$location', '$timeout', '$http', function ($scope, DatabaseControlService, HistoryService, $location, $timeout, $http) {
 		$scope.currentView = 'timeline';
 
-		var isFirstTimeline = true;
+		var totalTimelineEvents = [];
+
+		var timelineEventLocations = [];
+		var numberShownEvents = 0;
+
+		var heightDynamicalyUpdated = false;
+
+		function triggerClickScroll() {
+			debiki.Utterscroll.enable({
+				scrollstoppers: '.CodeMirror, .ui-resizable-handle' });
+		}
 
 		$scope.generateTimeline = function (person) {
-			//Need to adjust this when we do multiple timelines
-			isFirstTimeline = true;
 			$("#timelineContainer").empty(); //Delete any other timelines that are currently shown.
+			timelineEventLocations = [];
+			numberShownEvents = 0;
 			$(".se-pre-con").show(); //Show the loading spinner
 			$scope.person = person;
 			DatabaseControlService.queryForWho(person).then(function () {//Load the data from the person selected
 				var timelineEvents = DatabaseControlService.getQueryItems();
-				createTimeline(timelineEvents);
+				totalTimelineEvents.push(timelineEvents);
+				removePersons(timelineEvents);
+				createTimeline(totalTimelineEvents);
 				$(".se-pre-con").fadeOut("slow"); //Hide the loading spinner
 			});
 		};
+
+		//This function is used with the checkHistory function. Because it is going to be called when returning from somewhere then we need to wait for everything to load.
+		var waitForRenderAndDoSomething = function() {
+			if($http.pendingRequests.length > 0) {
+				$timeout(waitForRenderAndDoSomething); // Wait for all templates to be loaded
+			} else {
+				for (var i in totalTimelineEvents) {
+					removePersons(totalTimelineEvents[i]);
+				}
+				if (totalTimelineEvents.length == 1) {
+					$scope.person = totalTimelineEvents[0][0].who;
+				}
+				createTimeline(totalTimelineEvents);
+			}
+		};
+
+		//This function is called whenever the page is loaded. It checks if there is a point that the page needs to return to.
+		function checkHistory() {
+			var hist = HistoryService.getTimelineHistory();
+			if (hist.length) {
+				totalTimelineEvents = hist;
+				$timeout(waitForRenderAndDoSomething); // Waits for first digest cycle
+			}
+		}
+
+		//This function is used to add people back into the listing on the left.
+		function addPersons(name) {
+			$scope.people.push(name);
+			$scope.$apply();
+		}
+
+		//This function is used to remove the person's name from the listing on the left so that they cannot be selected twice.
+		function removePersons(event) {
+			var index = $scope.people.indexOf(event[0].who);
+			if (index > -1) {
+				$scope.people.splice(index, 1);
+			}
+		}
+
+		//This function is called whenever a timeline event is clicked. The item variable is the html element clicked (div)
+		function eventClick (item) {
+			var itemId = item.currentTarget.id;
+			var itemNum = parseInt(itemId.substr(itemId.indexOf("-") + 1));
+			HistoryService.setTimelineHistory(totalTimelineEvents);
+			$location.path('/bubble/' + timelineEventLocations[itemNum-1].event.id);
+			$scope.$apply();
+		}
 
 		//This function takes information that is calculated in the createTimeline function and dynamically adds an event circle and popup
 		function drawEvent (event, yearGap, timelineHeight, minYear, maxYear, blankAreaOnSideOfTimeline) {
@@ -51,6 +110,7 @@ angular.module('histViewer.main', ['ngRoute'])
 					sectionMinYear = i;
 				}
 			}
+			numberShownEvents++;
 
 			var sectionsSkipped = (sectionMinYear - minYear)/yearGap;
 
@@ -61,7 +121,29 @@ angular.module('histViewer.main', ['ngRoute'])
 			var percentDistBetween = ((momentEvent - momentMin)/(momentMax - momentMin));
 			var xPos = blankAreaOnSideOfTimeline + (120 * sectionsSkipped) + (120 * percentDistBetween);
 
-			var div = '<div class="eventCircle" style="top:' + (timelineHeight - 6) + 'px;left:' + (xPos - 7.5) + 'px;">';
+			var topVal = timelineHeight - 6;
+			var left = xPos - 7.5;
+
+			$scope.currentEventLocation = {
+				"top": topVal,
+				"left": left
+			};
+
+			$(".eventCircle").each(function(i, obj) {
+				var objPos = $(obj).position();
+				if (objPos.top == $scope.currentEventLocation.top) {
+					if (Math.abs(objPos.left - $scope.currentEventLocation.left) <= 15 ) {
+						$(obj).css("background-color", "red");
+						//Will need to do something so that we create an event circle that has several events in it.
+						if (Math.abs(objPos.left - $scope.currentEventLocation.left) <= 5) {//Temporary fix for extremely close events
+							$(obj).css("left", objPos.left + 5);
+						}
+					}
+				}
+			});
+
+			var div = '<div class="eventCircle" id="event-' + numberShownEvents + '" style="top:' + topVal + 'px;left:' + left + 'px;">';
+			timelineEventLocations.push({numberShownEvents, xPos, timelineHeight, event});
 
 			var innerdiv = '<div class="timelinePopup" ';
 			if ((momentEvent.year() - minYear)/yearGap <= 2) { //Circle is within the first 2 timeline sections
@@ -79,7 +161,11 @@ angular.module('histViewer.main', ['ngRoute'])
 
 			div += innerdiv;
 			div += '</div>';
+
 			$("#scrolling-timeline").append(div);
+
+			var curEvent = document.getElementById("event-" + numberShownEvents);
+			curEvent.onclick = eventClick;
 		}
 
 		//This function draws text on the timeline space centered at the given coordinates
@@ -155,17 +241,65 @@ angular.module('histViewer.main', ['ngRoute'])
 			return maxDate;
 		}
 
+		//This function is a helper function for the createTimelineImage in order to remove people from the totalTimelineEvents
+		function removeFromTotalEvents (name) {
+			var newTotalEvents = [];
 
-		function createTimelineImage(centerX, centerY) {
+			addPersons(name);
+
+			for (var i in totalTimelineEvents) {
+				if (totalTimelineEvents[i][0].who != name) {
+					newTotalEvents.push(totalTimelineEvents[i]);
+				}
+			}
+
+			totalTimelineEvents = newTotalEvents;
+
+			$("#timelineContainer").empty(); //Delete any other timelines that are currently shown.
+
+			//Need to check if there is only one event in order to fix the name.
+			if (totalTimelineEvents.length == 1) {
+				createTimeline(totalTimelineEvents, false, totalTimelineEvents[0][0].who);
+			}
+			else {
+				createTimeline(totalTimelineEvents);
+			}
+		}
+
+		//This function creates the image and bubble to the left of the timelines
+		function createTimelineImage(centerX, centerY, personName) {
+			var drawSpace = $('#timelineDrawSpace');
+
+			if (centerY + 40 > drawSpace.height()) {
+				heightDynamicalyUpdated = true;
+				var newHeight = drawSpace.height() + 150;
+				drawSpace.height(newHeight);
+				$('#timelineContainer').height(newHeight);
+				$('#viewContainer').height(newHeight);
+				$('#sideBar').height(newHeight);
+				$('#wholeScreen').height(newHeight);
+			}
+
 			var div = $('<div />', {
 				"class": 'timelineImage'
+			});
+
+			div.on("click", function(e){
+				var curName = $(this).find('.timelineName').text();
+				removeFromTotalEvents(curName);
 			});
 
 			var fa = '<i class="fa fa-user"></i>';
 
 			div.append(fa);
 
-			var person = '<p class="timelineName">' + $scope.person + '</p>';
+			var person = '<p class="timelineName">';
+			if (personName) {
+				person += personName + '</p>';
+			}
+			else {
+				person += $scope.person + '</p>';
+			}
 
 			div.append(person);
 
@@ -174,9 +308,10 @@ angular.module('histViewer.main', ['ngRoute'])
 			div.css('left', centerX - divWidth );
 			div.css('top', centerY - divHeight);
 
-			$("#timelineDrawSpace").append(div);
+			drawSpace.append(div);
 		}
 
+		//This function checks if there are several objects close together that may overlap eachother.
 		function checkCloseObjects (events, yearGap, minYear, maxYear) {
 			var arr = [];
 			var needsAdjustment = false;
@@ -212,13 +347,44 @@ angular.module('histViewer.main', ['ngRoute'])
 			return yearGap;
 		}
 
-		function createTimeline(events) {
-			if (isFirstTimeline) {
-				isFirstTimeline = false;
+		//This function calculates how much timelines need to be moved right or left in order for them to line up.
+		function calculateEventSeparations(eventArrays) {
+			if (eventArrays.length < 2) {
+				return;
+			}
+
+			var minDates = [];
+			var returnArr = [];
+			var minDate = 9999;
+
+			for (var i in eventArrays) {
+				minDates.push(getMinDate(eventArrays[i]).year());
+			}
+
+			for (var i in minDates) {
+				if (minDate > minDates[i]) {
+					minDate = minDates[i];
+				}
+			}
+
+			for (var i in minDates) {
+				returnArr.push({"yearDiff": (minDates[i] - minDate)});
+			}
+
+			return returnArr;
+		}
+
+		//This function generates the timeline. It calls most other functions.
+		function createTimeline(totalEvents, location, personName, gapBeginning, inYearGap) {
+			if (totalEvents.length == 1) {
+				var events = totalEvents[totalEvents.length - 1];
 				var cont = $("#timelineContainer");
 				var viewWidth = cont.width();
 				var viewHeight = cont.height();
-				var midlineHeight = viewHeight / 2;
+				var switchNum = (location ? location : 1);
+				var midlineHeight;
+
+				midlineHeight = switchNum * 185;
 
 				//Calculate how many sections of 10 years are needed.
 				var minDate = getMinDate(events);
@@ -239,6 +405,10 @@ angular.module('histViewer.main', ['ngRoute'])
 
 				yearGap = checkCloseObjects(events, yearGap, minYear, maxYear);
 
+				if (inYearGap) {
+					yearGap = inYearGap;
+				}
+
 				if (minYear % yearGap != 0) {
 					minYear -= (minYear % yearGap);
 				}
@@ -248,7 +418,7 @@ angular.module('histViewer.main', ['ngRoute'])
 
 				sectionsNeeded = (maxYear - minYear)/yearGap;
 
-				if (sectionsNeeded < 8) {
+				if (sectionsNeeded < 8 && !inYearGap) {
 					//Expand the timeline
 					switch (yearGap) {
 						case 10:
@@ -285,13 +455,21 @@ angular.module('histViewer.main', ['ngRoute'])
 				}
 
 				var blankAreaOnSideOfTimeline = 30;
+				if (gapBeginning) {
+					blankAreaOnSideOfTimeline += gapBeginning;
+				}
 
 				//Create a div for the timeline
-				var timelineSpace = '<div id="timelineDrawSpace" class="timelineDrawSpace" style="width:' + (viewWidth - 110) + 'px"><div id="scrolling-timeline" class="scrolling-timeline" style="width:' + ((sectionsNeeded * 120) + (2 * blankAreaOnSideOfTimeline)) + 'px"></div></div>';
+				var timelineSpace = '<div id="timelineDrawSpace" class="timelineDrawSpace" style="width:' + (viewWidth - 110) + 'px"><div id="scrolling-timeline" class="scrolling-timeline" style="width:' + ((sectionsNeeded * 120) + (2 * 40)) + 'px"></div></div>';
 
 				cont.append(timelineSpace);
 
-				createTimelineImage(410, midlineHeight);
+				if (personName) {
+					createTimelineImage(410, midlineHeight, personName);
+				}
+				else  {
+					createTimelineImage(410, midlineHeight);
+				}
 
 				//100px + 10px border to the left of the line for the picture.
 				//Also has a 10px border on the right of the line to be visually pleasing.
@@ -308,13 +486,21 @@ angular.module('histViewer.main', ['ngRoute'])
 					drawEvent(events[i], yearGap, midlineHeight, minYear, maxYear, blankAreaOnSideOfTimeline);
 				}
 			}
+			else if (totalEvents.length < 1) {
+
+			}
 			else {
-				//In here the code for multiply timelines will be generated.
+				var values = calculateEventSeparations(totalEvents);
+
+				for (var i in values) {
+					var a = [];
+					a.push(totalEvents[i]);
+					createTimeline(a, parseInt(i)+1, totalEvents[i][0].who, (120 * Math.floor(values[i].yearDiff/2)), 2);
+				}
 			}
 		}
 
-		//DrawLine(360, 200, 1000, 200);
-
+		//This function generates the list of people on the list to the left.
 		function generatePeople() {
 			var people = [];
 			var currentPerson = "";
@@ -331,9 +517,12 @@ angular.module('histViewer.main', ['ngRoute'])
 		DatabaseControlService.ensureDataPopulated().then(function () {
 			$scope.allItems = DatabaseControlService.getItems();
 			generatePeople();
+			checkHistory();
+			triggerClickScroll();
 			$(".se-pre-con").fadeOut("slow");
 		});
 
+		//Create variables in order to access certain DOM elements
 		var screen = document.getElementById("wholeScreen");
 		var sideBar = document.getElementById("sideBar");
 		var viewContainer = document.getElementById("viewContainer");
@@ -341,16 +530,22 @@ angular.module('histViewer.main', ['ngRoute'])
 		var bubbleContainer = document.getElementById("bubbleContainer");
 		var html = document.documentElement;
 
+		//Get the dimensions of the screen.
 		var height = html.clientHeight;
 		var width = html.clientWidth;
 
+		//Set dom elements to certain heights and widths depending on the screen dimensions
 		screen.setAttribute("style", "height:" + height + "px;width:" + width + "px;");
 		sideBar.setAttribute("style", "height:" + height + "px;width:" + 350 + "px;");
 		viewContainer.setAttribute("style", "height:" + height + "px;width:" + (width - 350) + "px;");
 		timelineContainer.setAttribute("style", "height:" + height + "px;width:" + (width - 350) + "px;");
 		bubbleContainer.setAttribute("style", "height:" + height + "px;width:" + (width - 350) + "px;");
 
+		//Function that does the above section whenever the screen is resized.
 		window.onresize = function () {
+			if (heightDynamicalyUpdated) {
+				return;
+			}
 			height = html.clientHeight;
 			width = html.clientWidth;
 

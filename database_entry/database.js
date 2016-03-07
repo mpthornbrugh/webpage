@@ -20,8 +20,12 @@ angular.module('databaseEntry.view', ['ngRoute'])
 		};
 
 		$scope.add = function () {
-			if (!$scope.who || !$scope.what || !$scope.when || !$scope.where || !$scope.ranking) {
+			if (!$scope.who || !$scope.what || !$scope.when || !$scope.where) {
 				return;
+			}
+
+			if (!$scope.ranking) {
+				$scope.ranking = 1;
 			}
 
 			var partiallySupported = false;

@@ -14,11 +14,11 @@ body, html {
 .sideBar {
 	background: url("http://i.stack.imgur.com/sepyh.jpg");
 	float: left;
-	border-right: 1px solid black;
+	overflow:auto;
 }
 
 .viewContainer {
-	background: white;
+	background: url(images/restaurant.png);
 	float: left;
 	overflow: hidden;
 }
@@ -48,10 +48,10 @@ body, html {
 
 .people-list {
 	overflow: auto;
-	height: 100% -35px;
 }
 
 .person-listing {
+	cursor: pointer;
 	text-align: center;
 	height: 50px;
 	margin: .2em;
@@ -62,6 +62,7 @@ body, html {
 
 .person-listing:hover {
 	border: 2px solid black;
+	cursor: pointer;
 	background: lightgrey;
 }
 
@@ -93,6 +94,10 @@ body, html {
 	font-size: 65px;
 }
 
+.timelineImage:hover {
+	cursor: pointer;
+}
+
 .timelineName {
 	font-size: 12px;
 	margin-top: 8px;
@@ -102,6 +107,8 @@ body, html {
 	height: 100%;
 	margin-left: 110px;
 	overflow: auto;
+	cursor: grab;
+	cursor: -webkit-grab;
 }
 
 .scrolling-timeline {
@@ -119,9 +126,11 @@ body, html {
 	display: none;
 	border-radius: 5px;
 	border: 1px solid black;
+	z-index: 1000;
 }
 
 .eventCircle {
+	cursor: pointer;
 	position:absolute;
 	height: 15px;
 	width: 15px;
@@ -132,4 +141,8 @@ body, html {
 
 .eventCircle:hover .timelinePopup{
 	display: block;
+}
+
+.input-group>input, .input-group>div{
+	border-radius: 0 !important;
 }

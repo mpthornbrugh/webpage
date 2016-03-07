@@ -161,15 +161,59 @@ angular.module('histViewer.service', ['ngRoute'])
 			}
 		};
 
+		var writtenQuery = function (query) {
+			var request = $http({
+				method: "post",
+				url: apiUrl + "inputQuery",
+				data: {
+					query:query
+				}
+			});
+
+			request.success(function (data) {
+				queryData = data;
+			});
+
+			request.error(function (err) {
+				alert("Error connecting to the server.");
+			});
+
+			return request;
+		};
+
+		var queryForWhere = function (where) {
+			var query = "SELECT * FROM links WHERE links.where like '%" + where + "%'";
+
+			var request = $http({
+				method: "post",
+				url: apiUrl + "inputQuery",
+				data: {
+					query:query
+				}
+			});
+
+			request.success(function (data) {
+				queryData = data;
+			});
+
+			request.error(function (err) {
+				queryData = [];
+			});
+
+			return request;
+		};
+
 		return {
-			addItem:        addItem,
-			getItems:       getItems,
-			getQueryItems: getQueryItems,
-			removeItem:     removeItem,
-			getItemByIndex: getItemByIndex,
-			updateItem:     updateItem,
-			ensureDataPopulated: ensureDataPopulated,
-			queryForWho: queryForWho,
-			queryForWhat: queryForWhat
+			addItem:              addItem,
+			getItems:             getItems,
+			getQueryItems:        getQueryItems,
+			removeItem:           removeItem,
+			getItemByIndex:       getItemByIndex,
+			updateItem:           updateItem,
+			ensureDataPopulated:  ensureDataPopulated,
+			queryForWho:          queryForWho,
+			queryForWhat:         queryForWhat,
+			writtenQuery:         writtenQuery,
+			queryForWhere:        queryForWhere
 		};
 	}]);
