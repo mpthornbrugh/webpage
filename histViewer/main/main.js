@@ -495,7 +495,7 @@ angular.module('histViewer.main', ['ngRoute'])
 				for (var i in values) {
 					var a = [];
 					a.push(totalEvents[i]);
-					createTimeline(a, parseInt(i)+1, totalEvents[i][0].who, (120 * Math.floor(values[i].yearDiff/2)), 2);
+					createTimeline(a, parseInt(i)+1, totalEvents[i][0].who, (120 * Math.floor(values[i].yearDiff/5)), 5);
 				}
 			}
 		}
