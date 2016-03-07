@@ -16,7 +16,7 @@ angular.module('databaseEntry.view', ['ngRoute'])
 		});
 
 		$scope.get = function () {
-			console.log(DatabaseControlService.getTasks());
+			//console.log(DatabaseControlService.getTasks());
 		};
 
 		$scope.add = function () {
@@ -28,6 +28,10 @@ angular.module('databaseEntry.view', ['ngRoute'])
 				$scope.ranking = 1;
 			}
 
+			if (!$scope.ref) {
+				$scope.ref = "";
+			}
+
 			var partiallySupported = false;
 
 			if ($("#databaseWhen").prop('type') != 'date') {
@@ -37,13 +41,13 @@ angular.module('databaseEntry.view', ['ngRoute'])
 
 			var when = $scope.when.toDateString();
 
-			//TODO: Instead of replacing all ' with / try encodeURIComponent and then decodeURIComponent when it's used
 			var addItem = {
-				who: $scope.who.replace("'", "/"),
-				what: $scope.what.replace("'", "/"),
+				who: $scope.who,
+				what: $scope.what,
 				when: when,
-				where: $scope.where.replace("'", "/"),
-				ranking: $scope.ranking
+				where: $scope.where,
+				ranking: $scope.ranking,
+				ref: $scope.ref
 			};
 
 			DatabaseControlService.addItem(addItem).then(function () {

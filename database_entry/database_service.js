@@ -70,7 +70,8 @@ angular.module('databaseEntry.service', ['ngRoute'])
 					what:newItem.what,
 					when:newItem.when,
 					where:newItem.where,
-					ranking:newItem.ranking
+					ranking:newItem.ranking,
+					ref:newItem.ref
 				}
 			});
 
@@ -92,7 +93,8 @@ angular.module('databaseEntry.service', ['ngRoute'])
 					what:updatedItem.what,
 					when:updatedItem.when,
 					where:updatedItem.where,
-					ranking:updatedItem.ranking
+					ranking:updatedItem.ranking,
+					ref:updatedItem.ref
 				}
 			});
 

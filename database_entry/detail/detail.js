@@ -25,19 +25,27 @@ angular.module('databaseEntry.detail', ['ngRoute'])
 		};
 
 		$scope.updateItem = function (id) {
-			if (!$scope.item.who || !$scope.item.what || !$scope.when || !$scope.item.where || !$scope.item.ranking) {
+			if (!$scope.item.who || !$scope.item.what || !$scope.when || !$scope.item.where) {
 				return;
+			}
+
+			if (!$scope.item.ranking) {
+				$scope.item.ranking = 1;
+			}
+
+			if (!$scope.item.ref) {
+				$scope.item.ref = "";
 			}
 
 			var when = $scope.when.toDateString();
 
-			//TODO: Instead of replacing all ' with / try encodeURIComponent and then decodeURIComponent when it's used
 			var updateItem = {
-				who: $scope.item.who.replace("'", "/"),
-				what: $scope.item.what.replace("'", "/"),
+				who: $scope.item.who,
+				what: $scope.item.what,
 				when: when,
-				where: $scope.item.where.replace("'", "/"),
-				ranking: $scope.item.ranking
+				where: $scope.item.where,
+				ranking: $scope.item.ranking,
+				ref: $scope.item.ref
 			};
 
 			DatabaseControlService.updateItem(id, updateItem).then(function (data) {

@@ -18,11 +18,7 @@
 		<textarea ng-model="item.where" class="form-control" rows="4" placeholder="And Where" required></textarea>
 	</div>
 	<div class="form-group">
-		<select ng-model="item.ranking" class="form-control" required>
-			<option value=1 ng-selected="item.ranking == 1">Trivial</option>
-			<option value=2 ng-selected="item.ranking == 2">Average</option>
-			<option value=3 ng-selected="item.ranking == 3">Significant</option>
-		</select>
+		<input ng-model="item.ref" type="text" class="form-control" id="databaseRef" placeholder="Reference Link (Optional)">
 	</div>
 	<button ng-click="updateItem(item.id)" type="submit" class="btn btn-primary btn-block">Update Item</button>
 	<button ng-click="deleteItem(item.id)" type="button" class="btn btn-primary btn-block">Delete Item</button>
