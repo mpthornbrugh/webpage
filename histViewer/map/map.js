@@ -17,7 +17,7 @@ histViewerMap.controller('testController', ['$scope', 'DatabaseControlService', 
 		var address = "";
 
 
-	DatabaseControlService.queryForWho('Zach Zastrow').then(function () {//Load the data from the place selected
+	DatabaseControlService.queryForWho('Johann Sebastian Bach').then(function () {//Load the data from the place selected
 		var mapItems = DatabaseControlService.getQueryItems();
 
 		places.push(mapItems);
