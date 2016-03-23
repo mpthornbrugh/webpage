@@ -17,12 +17,12 @@ histViewerMap.controller('testController', ['$scope', 'DatabaseControlService', 
 		var address = "";
 
 
-	DatabaseControlService.queryForWho('Johann Sebastian Bach').then(function () {//Load the data from the place selected
+	DatabaseControlService.queryForWho('Ludwig van Beethoven').then(function () {//Load the data from the place selected
 		var mapItems = DatabaseControlService.getQueryItems();
 
 		places.push(mapItems);
 		address = places[0].where;
-		geoCoder(places[0][0].where, places[0][0].who + " - " + places[0][0].what);
+		geoCoder(places[0][0].where, places[0][0].who + " -- " + places[0][0].what);
 
 	});
 
