@@ -22,7 +22,7 @@ histViewerMap.controller('testController', ['$scope', 'DatabaseControlService', 
 
 		places.push(mapItems);
 		address = places[0].where;
-		geoCoder(places[0][0].where, places[0][0].who + " -- " + places[0][0].what);
+		geoCoder(places[0][0].where, places[0][0].who + " -- " + places[0][0].what + " -- " + places[0][0].when);
 
 	});
 
