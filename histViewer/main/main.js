@@ -296,9 +296,21 @@ angular.module('histViewer.main', ['ngRoute'])
 				removeFromTotalEvents(curName);
 			});
 
+			var mapDiv = $('<div />', {
+				"class": 'timelineImageMapIcon'
+			});
+
+			mapDiv.on("click", function(e) {
+				var curName = $(this).parent().find('.timelineName').text();
+				$location.path('/map/' + curName);
+			});
+
 			var fa = '<i class="fa fa-user"></i>';
 
+			var faMap = '<i class="fa fa-globe"></i>';
+
 			div.append(fa);
+			mapDiv.append(faMap);
 
 			var person = '<p class="timelineName">';
 			if (personName) {
@@ -315,7 +327,11 @@ angular.module('histViewer.main', ['ngRoute'])
 			div.css('left', centerX - divWidth );
 			div.css('top', centerY - divHeight);
 
+			mapDiv.css('left', 60);
+			mapDiv.css('top', -10);
+
 			drawSpace.append(div);
+			div.append(mapDiv);
 		}
 
 		//This function checks if there are several objects close together that may overlap eachother.
