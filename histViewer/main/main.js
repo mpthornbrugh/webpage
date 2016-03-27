@@ -302,6 +302,7 @@ angular.module('histViewer.main', ['ngRoute'])
 
 			mapDiv.on("click", function(e) {
 				var curName = $(this).parent().find('.timelineName').text();
+				HistoryService.setTimelineHistory(totalTimelineEvents);
 				$location.path('/map/' + curName);
 			});
 

@@ -161,3 +161,17 @@ body, html {
 .input-group>input, .input-group>div{
 	border-radius: 0 !important;
 }
+
+.closeMap {
+	height: 100px;
+	width: 100px;
+	position: absolute;
+	top:0;
+	left: calc(100% - 100px);
+	border-radius: 50%;
+	cursor:pointer;
+}
+
+.closeMap:hover {
+	background: rgba(200, 200, 200, 0.5);
+}
