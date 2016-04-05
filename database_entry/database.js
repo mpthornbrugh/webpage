@@ -20,37 +20,51 @@ angular.module('databaseEntry.view', ['ngRoute'])
 		};
 
 		$scope.add = function () {
-			if (!$scope.who || !$scope.what || !$scope.when || !$scope.where) {
+			if (!$scope.who || !$scope.action || !$scope.when || !$scope.where) {
 				return;
 			}
 
+			$scope.who = $scope.who.toUpperCase();
+
 			if (!$scope.ranking) {
 				$scope.ranking = 1;
+			}
+
+			if (!$scope.compliment1) {
+				$scope.compliment1 = "";
+			}
+
+			if (!$scope.compliment2) {
+				$scope.compliment2 = "";
 			}
 
 			if (!$scope.ref) {
 				$scope.ref = "";
 			}
 
-			var partiallySupported = false;
-
-			if ($("#databaseWhen").prop('type') != 'date') {
-				$scope.when = new Date($scope.when);
-				partiallySupported = true;
+			var what = $scope.action;
+			if ($scope.compliment1 != "") {
+				what += " " + $scope.compliment1;
+			}
+			if ($scope.compliment2 != "") {
+				what += " " + $scope.compliment2;
 			}
 
-			var when = $scope.when.toDateString();
+			var partiallySupported = false;
 
 			var addItem = {
 				who: $scope.who,
-				what: $scope.what,
-				when: when,
+				what: what,
+				action: $scope.action,
+				compliment1:$scope.compliment1,
+				compliment2:$scope.compliment2,
+				when: $scope.when,
 				where: $scope.where,
 				ranking: $scope.ranking,
 				ref: $scope.ref
 			};
 
-			DatabaseControlService.addItem(addItem).then(function () {
+			DatabaseControlService.addItem(addItem).then(function (x, y) {
 				if (partiallySupported) {
 					alert("Data successfully added although date is only partially supported. Please go to the list to verify that it saved correctly.");
 				}

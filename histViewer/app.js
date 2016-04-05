@@ -6,7 +6,8 @@ angular.module('histViewer', [
 	'histViewer.bubble',
 	'histViewer.service',
 	'histViewer.historyService',
-	'histViewerMap'
+	'histViewerMap',
+	'histViewer.newBubble'
 ])
 	.config(['$routeProvider', function ($routeProvider) {
 		$routeProvider.otherwise({redirectTo: '/main'});

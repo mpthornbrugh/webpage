@@ -42,6 +42,18 @@ angular.module('histViewer.main', ['ngRoute'])
 				scrollstoppers: '.CodeMirror, .ui-resizable-handle' });
 		}
 
+		function correctCapitalization(name) {
+			var newName = "";
+			var words = name.split(" ");
+			for (var i = 0; i < words.length; i++) {
+				var word = words[i].toLowerCase();
+				word = word.charAt(0).toUpperCase() + word.slice(1);
+				newName += word + " ";
+			}
+			newName = newName.substr(0, newName.length-1);
+			return newName;
+		}
+
 		$scope.generateTimeline = function (person) {
 			$("#timelineContainer").empty(); //Delete any other timelines that are currently shown.
 			timelineEventLocations = [];
@@ -50,6 +62,9 @@ angular.module('histViewer.main', ['ngRoute'])
 			$scope.person = person;
 			DatabaseControlService.queryForWho(person).then(function () {//Load the data from the person selected
 				var timelineEvents = DatabaseControlService.getQueryItems();
+				for (var i = 0; i < timelineEvents.length; i++) {
+					timelineEvents[i].who = correctCapitalization(timelineEvents[i].who);
+				}
 				totalTimelineEvents.push(timelineEvents);
 				removePersons(timelineEvents);
 				createTimeline(totalTimelineEvents);
@@ -108,7 +123,7 @@ angular.module('histViewer.main', ['ngRoute'])
 		function drawEvent (event, yearGap, timelineHeight, minYear, maxYear, blankAreaOnSideOfTimeline) {
 			var sectionMinYear;
 			for (var i = minYear; i < maxYear; i += yearGap) {
-				if (moment(event.when).year() >= i) { //
+				if (moment(new Date(event.when)).year() >= i) { //
 					sectionMinYear = i;
 				}
 			}
@@ -116,9 +131,9 @@ angular.module('histViewer.main', ['ngRoute'])
 
 			var sectionsSkipped = (sectionMinYear - minYear)/yearGap;
 
-			var momentMin = moment("Jan 01 " + sectionMinYear + "");
-			var momentMax = moment("Jan 01 " + (sectionMinYear + yearGap) + "");
-			var momentEvent = moment(event.when);
+			var momentMin = moment(new Date("Jan 01 " + sectionMinYear + ""));
+			var momentMax = moment(new Date("Jan 01 " + (sectionMinYear + yearGap) + ""));
+			var momentEvent = moment(new Date(event.when));
 
 			var percentDistBetween = ((momentEvent - momentMin)/(momentMax - momentMin));
 			var xPos = blankAreaOnSideOfTimeline + (120 * sectionsSkipped) + (120 * percentDistBetween);
@@ -224,10 +239,10 @@ angular.module('histViewer.main', ['ngRoute'])
 			var minDate;
 			for (var i in events) {
 				if (!minDate) {
-					minDate = moment(events[i].when);
+					minDate = moment(new Date(events[i].when));
 				}
-				else if (moment(events[i].when) < minDate) {
-					minDate = moment(events[i].when);
+				else if (moment(new Date(events[i].when)) < minDate) {
+					minDate = moment(new Date(events[i].when));
 				}
 			}
 			return minDate;
@@ -238,10 +253,10 @@ angular.module('histViewer.main', ['ngRoute'])
 			var maxDate;
 			for (var i in events) {
 				if (!maxDate) {
-					maxDate = moment(events[i].when);
+					maxDate = moment(new Date(events[i].when));
 				}
-				else if (moment(events[i].when) > maxDate) {
-					maxDate = moment(events[i].when);
+				else if (moment(new Date(events[i].when)) > maxDate) {
+					maxDate = moment(new Date(events[i].when));
 				}
 			}
 			maxDate.add(1, 'years');
@@ -344,7 +359,7 @@ angular.module('histViewer.main', ['ngRoute'])
 			}
 
 			for (var i in events) {
-				var eventYear = moment(events[i].when).year();
+				var eventYear = moment(new Date(events[i].when)).year();
 				arr[(eventYear - minYear)] += 1;
 				if (arr[(eventYear - minYear)] > 2) {
 					needsAdjustment = true;

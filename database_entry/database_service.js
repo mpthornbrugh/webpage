@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('databaseEntry.service', ['ngRoute'])
-		.service('DatabaseControlService', ['$q', '$http', function ($q, $http) {
+	.service('DatabaseControlService', ['$q', '$http', function ($q, $http) {
 
 		var apiUrl = "https://historicaldv.herokuapp.com/";
 		var allItems = [];
@@ -71,6 +71,9 @@ angular.module('databaseEntry.service', ['ngRoute'])
 					when:newItem.when,
 					where:newItem.where,
 					ranking:newItem.ranking,
+					action:newItem.action,
+					compliment1:newItem.compliment1,
+					compliment2:newItem.compliment2,
 					ref:newItem.ref
 				}
 			});
@@ -94,6 +97,9 @@ angular.module('databaseEntry.service', ['ngRoute'])
 					when:updatedItem.when,
 					where:updatedItem.where,
 					ranking:updatedItem.ranking,
+					action:updatedItem.action,
+					compliment1:updatedItem.compliment1,
+					compliment2:updatedItem.compliment2,
 					ref:updatedItem.ref
 				}
 			});

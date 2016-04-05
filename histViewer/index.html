@@ -10,15 +10,16 @@
 	<link href="histViewer.css" rel="stylesheet">
 	<link href="../css/bootstrap.min.css" rel="stylesheet">
 	<link href="bubble/bubble.css" rel="stylesheet">
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
 </head>
 <body>
 <script src="../includes/angular.min.js"></script>
 <script src="../includes/angular-route.min.js"></script>
 <script src="../includes/jquery.min.js"></script>
 <script src="../includes/moment.js"></script>
-<script src="../includes/require.min.js"></script>
+<!--<script src="../includes/require.min.js"></script>-->
 <script src="../includes/ui-bootstrap-tpls-0.13.4.min.js"></script>
+<script src="../includes/d3.min.js"></script>
 <script src="../Utterscroll/debiki-utterscroll.js"></script>
 <script src="../Utterscroll/jquery-scrollable.js"></script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB4BWtGgmTpi6ypJUt-6XY6XDqW41YsRyI"></script>
@@ -29,10 +30,11 @@
 <script src="services/histViewer.service.js"></script>
 <script src="services/histViewer.historyService.js"></script>
 <script src="map/map.js"></script>
+<script src="new_bubble/new_bubble.js"></script>
 
 <div id="loading-spinner" class="se-pre-con"></div>
 
-<div ng-view></div>
+<div ng-view style="width: 100%;height:100%;"></div>
 
 </body>
 </html>

@@ -8,9 +8,24 @@ angular.module('histViewer.service', ['ngRoute'])
 		var queryData = [];
 		var dataPopulatedPromise;
 
+		function correctCapitalization(name) {
+			var newName = "";
+			var words = name.split(" ");
+			for (var i = 0; i < words.length; i++) {
+				var word = words[i].toLowerCase();
+				word = word.charAt(0).toUpperCase() + word.slice(1);
+				newName += word + " ";
+			}
+			newName = newName.substr(0, newName.length-1);
+			return newName;
+		}
+
 		function populateAllItems() {
 			return $http.get(apiUrl + "getItems").
 				success(function (data) {
+					for (var i = 0; i < data.length; i++) {
+						data[i].who = correctCapitalization(data[i].who);
+					}
 					allItems = data;
 				}).
 				error(function (err) {
@@ -40,6 +55,8 @@ angular.module('histViewer.service', ['ngRoute'])
 		};
 
 		var queryForWho = function (who) {
+			who = who.toUpperCase();
+
 			var request = $http({
 				method: "post",
 				url: apiUrl + "getItemsByWho",
@@ -61,6 +78,7 @@ angular.module('histViewer.service', ['ngRoute'])
 		};
 
 		var addItem = function (newItem) {
+			debugger;
 			var request = $http({
 				method: "post",
 				url: apiUrl + "addItem",
@@ -70,7 +88,10 @@ angular.module('histViewer.service', ['ngRoute'])
 					what:newItem.what,
 					when:newItem.when,
 					where:newItem.where,
-					ranking:newItem.ranking
+					ranking:newItem.ranking,
+					action:newItem.action,
+					compliment1:newItem.compliment1,
+					compliment2:newItem.compliment2
 				}
 			});
 
@@ -93,7 +114,10 @@ angular.module('histViewer.service', ['ngRoute'])
 					what:updatedItem.what,
 					when:updatedItem.when,
 					where:updatedItem.where,
-					ranking:updatedItem.ranking
+					ranking:updatedItem.ranking,
+					action:updatedItem.action,
+					compliment1:updatedItem.compliment1,
+					compliment2:updatedItem.compliment2
 				}
 			});
 

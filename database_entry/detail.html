@@ -1,0 +1,45 @@
+<button ng-click="goto('list')" type="submit" class="btn btn-primary btn-block">Back to List</button>
+
+<form>
+	<div class="form-group">
+		<input ng-model="item.who" type="text" class="form-control" id="databaseWho" placeholder="Who" required>
+	</div>
+	<div class="form-group">
+		<select ng-model="item.action" class="form-control" required>
+			<option value="" disabled selected>Action</option>
+			<option value="Was Born">Was Born</option>
+			<option value="Died">Died</option>
+			<option value="Met">Met</option>
+			<option value="Played">Played</option>
+			<option value="Traveled">Traveled</option>
+			<option value="Started Writing">Started Writing</option>
+			<option value="Ended Writing">Ended Writing</option>
+			<option value="Had Executed">Had Executed</option>
+			<option value="Performed">Performed</option>
+		</select>
+	</div>
+	<div class="form-group">
+		<textarea ng-model="item.compliment1" class="form-control" rows="4" placeholder="Compliment 1"></textarea>
+	</div>
+	<div class="form-group">
+		<textarea ng-model="item.compliment2" class="form-control" rows="4" placeholder="Compliment 2"></textarea>
+	</div>
+	<!--<div class="form-group">-->
+		<!--<textarea ng-model="item.what" class="form-control" rows="4" placeholder="Did What" required></textarea>-->
+	<!--</div>-->
+	<div class="form-group">
+		<input ng-model="when" type="date" class="form-control" id="databaseWhen" placeholder="When" required>
+	</div>
+	<!--
+	TODO: Convert this to use location selector
+	http://logicify.github.io/jquery-locationpicker-plugin/
+	-->
+	<div class="form-group">
+		<textarea ng-model="item.where" class="form-control" rows="4" placeholder="And Where" required></textarea>
+	</div>
+	<div class="form-group">
+		<input ng-model="item.ref" type="text" class="form-control" id="databaseRef" placeholder="Reference Link (Optional)">
+	</div>
+	<button ng-click="updateItem(item.id)" type="submit" class="btn btn-primary btn-block">Update Item</button>
+	<button ng-click="deleteItem(item.id)" type="button" class="btn btn-primary btn-block">Delete Item</button>
+</form>
