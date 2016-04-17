@@ -5,7 +5,8 @@ angular.module('histViewer.main', ['ngRoute'])
 	.config(['$routeProvider', function ($routeProvider) {
 		$routeProvider.when('/main', {
 			templateUrl: 'main/main.html',
-			controller: 'MainCtrl'
+			controller: 'MainCtrl',
+			controllerAs: 'vm'
 		});
 	}])
 
@@ -99,7 +100,7 @@ angular.module('histViewer.main', ['ngRoute'])
 		//This function is used to add people back into the listing on the left.
 		function addPersons(name) {
 			$scope.people.push(name);
-			$scope.$apply();
+			//$scope.$apply();
 		}
 
 		//This function is used to remove the person's name from the listing on the left so that they cannot be selected twice.
@@ -150,7 +151,7 @@ angular.module('histViewer.main', ['ngRoute'])
 				var objPos = $(obj).position();
 				if (objPos.top == $scope.currentEventLocation.top) {
 					if (Math.abs(objPos.left - $scope.currentEventLocation.left) <= 15 ) {
-						$(obj).css("background-color", "red");
+						$(obj).css("background-color", "#ff3700");
 						//Will need to do something so that we create an event circle that has several events in it.
 						if (Math.abs(objPos.left - $scope.currentEventLocation.left) <= 5) {//Temporary fix for extremely close events
 							$(obj).css("left", objPos.left + 5);
@@ -309,6 +310,7 @@ angular.module('histViewer.main', ['ngRoute'])
 			div.on("click", function(e){
 				var curName = $(this).find('.timelineName').text();
 				removeFromTotalEvents(curName);
+				$scope.$apply();
 			});
 
 			var mapDiv = $('<div />', {

@@ -6,8 +6,7 @@ angular.module('tljs', [
 	'tljs.home',
 	'tljs.about',
 	'tljs.blog',
-	'tljs.blog.detail',
-	'databaseEntry.query'
+	'tljs.blog.detail'
 ])
 	.config(['$routeProvider', function ($routeProvider) {
 		$routeProvider.otherwise({redirectTo: '/home'});

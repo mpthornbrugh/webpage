@@ -6,7 +6,7 @@
 		<h1 ng-if="circleHistory.length > 0">History</h1>
 		<div ng-repeat="history in circleHistory" style="font-size:20px;">
 			<div class="list-item" ng-click="goToCircleHistory(history, $index)">
-				{{history[0].text}}
+				{{history[0].historyText}}
 			</div>
 		</div>
 	</div>
