@@ -135,7 +135,7 @@ histViewerMap.controller('testController', ['$scope', 'DatabaseControlService', 
 	}
 
 	function placeMarker(locationObj) {
-		var displayString = '<ul style="list-style: none; padding-left: 10px;">'+
+		var displayString = "<h3>" + locationObj.address.where + "</h3>" + '<ul style="list-style: none; padding-left: 10px;">'+
 			'<li>' + locationObj.address.what + '</li>' +
 			'<li>' + locationObj.address.when + '</li>';
 
@@ -190,7 +190,7 @@ histViewerMap.controller('testController', ['$scope', 'DatabaseControlService', 
 
 		$scope.marker = new google.maps.Marker({
 			position: locationObj.location,
-			title: displayString
+			title: locationObj.address.what
 		});
 
 		$scope.marker.addListener('click', function () {
@@ -206,7 +206,7 @@ histViewerMap.controller('testController', ['$scope', 'DatabaseControlService', 
 
 	function replaceMarker(locationObj){
 
-		var displayString = '<ul style="list-style: none; padding-left: 10px;">'+
+		var displayString = "<h3>" + locationObj.address.where + "</h3>" + '<ul style="list-style: none; padding-left: 10px;">'+
 			'<li>' + locationObj.address.what + '</li>' +
 			'<li>' + locationObj.address.when + '</li>';
 
@@ -258,7 +258,7 @@ histViewerMap.controller('testController', ['$scope', 'DatabaseControlService', 
 
 		$scope.marker = new google.maps.Marker({
 			position: locationObj.location,
-			title: displayString
+			title: locationObj.address.what
 		});
 
 		$scope.marker.addListener('click', function () {
@@ -442,8 +442,8 @@ histViewerMap.controller('testController', ['$scope', 'DatabaseControlService', 
 
 			//create new marker and overwrite
 
-			$scope.descriptions[j] = "";
-			$scope.descriptions[j] = "<a onclick='markerLinkClicked(" + j + ");'>" +places[0][j].who + " " + places[0][j].what + "</a></br>";
+			$scope.descriptions[j] = "<h3>" + places[0][j].where + "</h3>";
+			$scope.descriptions[j] += "<a onclick='markerLinkClicked(" + j + ");'>" +places[0][j].who + " " + places[0][j].what + "</a></br>";
 			$scope.descriptions[j] +=  "<a onclick='markerLinkClicked(" + i + ");'>" +places[0][i].who + " " + places[0][i].what + "</a></br>";
 
 			$scope.infoWindowMulti = new google.maps.InfoWindow({
@@ -516,8 +516,8 @@ histViewerMap.controller('testController', ['$scope', 'DatabaseControlService', 
 
 			//create new marker and overwrite
 
-			$scope.descriptions[j] = "";
-			$scope.descriptions[j] = "<a onclick='markerLinkClicked(" + j + ");'>" + $scope.filteredPlaces[j].address.who + " " + $scope.filteredPlaces[j].address.what + "</a></br>";
+			$scope.descriptions[j] = "<h3>" + places[0][j].where + "</h3>";
+			$scope.descriptions[j] += "<a onclick='markerLinkClicked(" + j + ");'>" + $scope.filteredPlaces[j].address.who + " " + $scope.filteredPlaces[j].address.what + "</a></br>";
 			$scope.descriptions[j] +=  "<a onclick='markerLinkClicked(" + i + ");'>" + $scope.filteredPlaces[i].address.who + " " + $scope.filteredPlaces[i].address.what + "</a></br>";
 
 			$scope.infoWindowMulti = new google.maps.InfoWindow({
