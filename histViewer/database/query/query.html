@@ -1,0 +1,27 @@
+<button ng-click="goto('list')" type="submit" class="btn btn-primary btn-block">Back to List</button>
+
+<form>
+	<div class="form-group">
+		<input ng-model="queryBy" type="text" class="form-control" id="queryBy" placeholder="Who or What to query for similar items" required>
+	</div>
+	<button ng-click="queryForWho()" type="button" class="btn btn-primary btn-block">Query on Who</button>
+	<button ng-click="queryForWhat()" type="button" class="btn btn-primary btn-block">Query on What</button>
+	<button ng-click="writeQuery()" type="button" class="btn btn-primary btn-block">Query by Query Written Above</button>
+</form>
+
+<div>
+	<div class="list-item" ng-repeat="item in items | orderBy:'who' | filter:query" ng-click="goToDetail(item.id)">
+		<div class="section">
+			Who: {{item.who}}
+		</div>
+		<div class="section">
+			What: {{item.what}}
+		</div>
+		<div class="section">
+			When: {{item.when}}
+		</div>
+		<div class="section">
+			Where: {{item.where}}
+		</div>
+	</div>
+</div>

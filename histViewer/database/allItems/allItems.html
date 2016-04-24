@@ -1,0 +1,24 @@
+<button ng-click="goto('db/main')" type="submit" class="btn btn-primary btn-block">Add To Database</button>
+<button ng-click="goto('main')" type="submit" class="btn btn-primary btn-block">Go Back to Viewer</button>
+
+<div class="input-group" style="width:100%;margin-bottom:5px;">
+	<input ng-model="query" type="text" class="form-control" id="query" placeholder="Search Events...">
+	<div class="input-group-addon" style="width:38px"><i class="fa fa-search"></i></div>
+</div>
+
+<div>
+	<div class="list-item" ng-repeat="item in items | orderBy:'who' | filter:query" ng-click="goToDetail(item.id)">
+		<div class="section">
+			Who: {{item.who}}
+		</div>
+		<div class="section">
+			What: {{item.what}}
+		</div>
+		<div class="section">
+			When: {{item.when}}
+		</div>
+		<div class="section">
+			Where: {{item.where}}
+		</div>
+	</div>
+</div>

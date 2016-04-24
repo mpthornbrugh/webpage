@@ -1,4 +1,17 @@
 <div>
 	<div id="map"></div>
 	<img ng-click="hideMap()" src="../includes/animat-x.gif" class="closeMap">
+	<img ng-click="setDateRange()" src="../includes/setDateRange.png" class="setDateRange">
+	<div class="mapTitle">
+		{{title}}
+	</div>
+	<div class="startDate">
+		<b>Start Date</b>
+		<input id="startDateInput" class="sdInput" type="text" title="Start Year" name="date1" value="" size="2" maxlength="4">
+	</div>
+	<div class="endDate">
+		<b>End Date</b>
+		<input id="endDateInput" class="edInput" type="text" title="End Year" name="date2" value="" size="2" maxlength="4">
+	</div>
+
 </div>

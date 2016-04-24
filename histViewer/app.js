@@ -7,7 +7,12 @@ angular.module('histViewer', [
 	'histViewer.service',
 	'histViewer.historyService',
 	'histViewerMap',
-	'histViewer.newBubble'
+	'histViewer.newBubble',
+	'databaseEntry.view',
+	'databaseEntry.list',
+	'databaseEntry.detail',
+	'databaseEntry.service',
+	'databaseEntry.query'
 ])
 	.config(['$routeProvider', function ($routeProvider) {
 		$routeProvider.otherwise({redirectTo: '/main'});

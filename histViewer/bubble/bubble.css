@@ -388,6 +388,8 @@
 	width: 9em !important;
 	height: 9em !important;
 	background: radial-gradient(circle at 100px 100px, #fbf6ff, #71c8ff);
+	overflow: auto;
+	border: 2px solid white;
 }
 
 .bubble-ring:before {
@@ -419,6 +421,11 @@
 	height: 4em;
 	margin: -2em;
 	text-align: center;
+	transition: width 1s, height 1s, margin 1s;
+	-moz-transition: width 1s, height 1s, margin 1s; /* Firefox 4 */
+	-webkit-transition: width 1s, height 1s, margin 1s; /* Safari and Chrome */
+	-o-transition: width 1s, height 1s, margin 1s; /* Opera */
+	-ms-transition: width 1s, height 1s, margin 1s; /* IE9 (maybe) */
 }
 
 .bubble-container span {
@@ -433,6 +440,19 @@
 	font-size: 5em !important;
 	margin-top: .2em;
 	color: blue;
+}
+
+.bubble-ring:hover {
+	width: 12em !important;
+	height: 12em !important;
+	margin: -6em !important;/* inital margin - ((intial margin - width (or height))/2) */
+	z-index: 100;
+}
+
+.bubble-ring:hover .bubbleTextContainer {
+	width: 9em !important;
+	height: 9em !important;
+	margin: -4.25em !important;
 }
 
 .bubble-fa-icon-center {
@@ -479,6 +499,7 @@
 	margin-bottom: .2em;
 	border: 1px solid black;
 	font-family:fantasy;
+	overflow: auto;
 }
 
 .list-item:hover {
@@ -516,6 +537,19 @@
 	background: none !important;
 	text-align: center;
 }
+
+.bubbleTextContainer {
+	width: 6em !important;
+	height: 6em !important;
+	margin: -3em !important;
+	overflow: hidden;
+	transition: width 1s, height 1s, margin 1s;
+	-moz-transition: width 1s, height 1s, margin 1s; /* Firefox 4 */
+	-webkit-transition: width 1s, height 1s, margin 1s; /* Safari and Chrome */
+	-o-transition: width 1s, height 1s, margin 1s; /* Opera */
+	-ms-transition: width 1s, height 1s, margin 1s; /* IE9 (maybe) */
+}
+
 
 
 

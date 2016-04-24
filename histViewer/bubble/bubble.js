@@ -42,11 +42,25 @@ angular.module('histViewer.bubble', ['ngRoute'])
 		}
 
 		function getAssociatedItems(currItem, type) {
+			if (type.toLowerCase() == "where") {
+				$location.path("/map/" + currItem.who);
+			}
 			var items = [];
+			var currItemMoment = moment(new Date(currItem.when));
 			$scope.allItems.forEach(function(item) {
-				var typeString = item[type];
-				if(wildcard(typeString, "*" + currItem[type] + "*")) {
-					items.push(item);
+				switch (type.toLowerCase()) {
+					case "who":
+						var typeString = item[type];
+						if(wildcard(typeString, "*" + currItem[type] + "*")) {
+							items.push(item);
+						}
+						break;
+					case "when":
+						var thisMomentDate = moment(new Date(item.when));
+						if ((thisMomentDate.diff(currItemMoment)) < 31557600000) {
+							items.push(item);
+						}
+						break;
 				}
 			});
 
@@ -189,6 +203,10 @@ angular.module('histViewer.bubble', ['ngRoute'])
 		}
 
 		function generateAssocBubbles(eventId, updateHistory, type) {
+			if (type.toLowerCase() == "where") {
+				$location.path("/map/" + getEventById(eventId).who);
+				return;
+			}
 			var currentItem = getEventById(eventId),
 				assocItems = getAssociatedItems(currentItem,type),
 				degreeVals = getDegreeValues(assocItems.length);
