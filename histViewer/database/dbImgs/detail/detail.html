@@ -1,0 +1,17 @@
+<button ng-click="goto('db/image')" type="submit" class="btn btn-primary btn-block">Back to List of Images</button>
+<button ng-click="goto('db/list')" type="submit" class="btn btn-primary btn-block">Back to List of Events</button>
+
+<form style="font-size: 16px;">
+	<div class="form-group">
+		<label for="databaseImgName">Name</label>
+		<input ng-model="person.name" type="text" class="form-control" id="databaseImgName" placeholder="Name" readonly>
+	</div>
+	<div class="form-group">
+		<label for="databaseImgUrl">URL</label>
+		<input ng-model="person.url" type="text" class="form-control" id="databaseImgUrl" placeholder="Please enter url to the image">
+	</div>
+	<div class="imageHolder">
+		<img ng-src="{{person.url}}" alt="No Image Yet">
+	</div>
+	<button ng-click="updateImage()" type="submit" class="btn btn-primary btn-block">Update Image</button>
+</form>

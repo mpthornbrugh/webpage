@@ -1,0 +1,15 @@
+<button ng-click="goto('db/list')" type="submit" class="btn btn-primary btn-block">Back to List</button>
+
+<div class="input-group" style="width:100%;margin-bottom:5px;">
+	<input ng-model="query" type="text" class="form-control" id="query" placeholder="Search Events...">
+	<div class="input-group-addon" style="width:38px"><i class="fa fa-search"></i></div>
+</div>
+
+<div>
+	<div ng-repeat="image in allImages | orderBy: 'name'| filter:query" ng-click="gotoDetail(image.name)">
+		<div class="list-item" style="height:50px;">
+			{{image.name}}
+			<img ng-src="{{image.url}}" alt="None" style="max-width: 50px;max-height:50px">
+		</div>
+	</div>
+</div>

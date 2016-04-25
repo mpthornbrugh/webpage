@@ -12,7 +12,9 @@ angular.module('histViewer', [
 	'databaseEntry.list',
 	'databaseEntry.detail',
 	'databaseEntry.service',
-	'databaseEntry.query'
+	'databaseEntry.query',
+	'databaseEntry.image',
+	'databaseEntry.images.detail'
 ])
 	.config(['$routeProvider', function ($routeProvider) {
 		$routeProvider.otherwise({redirectTo: '/main'});

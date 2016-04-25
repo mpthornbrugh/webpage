@@ -58,7 +58,7 @@ histViewerMap.controller('testController', ['$scope', 'DatabaseControlService', 
 
 	$scope.setStartDate = function () {
 
-		if(isNaN(document.getElementById("startDateInput").value)){
+		if(isNaN(document.getElementById("startDateInput").value) || document.getElementById("startDateInput").value == ""){
 			alert("Please enter a valid start year.")
 		}else{
 			$scope.startDate = new Date(document.getElementById("startDateInput").value);
@@ -68,7 +68,7 @@ histViewerMap.controller('testController', ['$scope', 'DatabaseControlService', 
 
 	$scope.setEndDate = function () {
 
-		if(isNaN(document.getElementById("endDateInput").value)){
+		if(isNaN(document.getElementById("endDateInput").value) || document.getElementById("endDateInput").value == ""){
 			alert("Please enter a valid end year.");
 		}else{
 			$scope.endDate = new Date(document.getElementById("endDateInput").value);
@@ -81,7 +81,7 @@ histViewerMap.controller('testController', ['$scope', 'DatabaseControlService', 
 		$scope.setStartDate();
 		$scope.setEndDate();
 
-		if(isNaN(document.getElementById("startDateInput").value) || isNaN(document.getElementById("endDateInput").value)){
+		if(isNaN(document.getElementById("startDateInput").value) || isNaN(document.getElementById("endDateInput").value) || document.getElementById("startDateInput").value == "" || document.getElementById("endDateInput").value == ""){
 			//do nothing
 		}else{
 			reinitialize($scope.startDate, $scope.endDate);
@@ -135,7 +135,7 @@ histViewerMap.controller('testController', ['$scope', 'DatabaseControlService', 
 	}
 
 	function placeMarker(locationObj) {
-		var displayString = "<h3>" + locationObj.address.where + "</h3>" + '<ul style="list-style: none; padding-left: 10px;">'+
+		var displayString = "<h3 style='padding-left: 10px;'>" + locationObj.address.where + "</h3>" + '<ul style="list-style: none; padding-left: 10px;">'+
 			'<li>' + locationObj.address.what + '</li>' +
 			'<li>' + locationObj.address.when + '</li>';
 
@@ -206,7 +206,7 @@ histViewerMap.controller('testController', ['$scope', 'DatabaseControlService', 
 
 	function replaceMarker(locationObj){
 
-		var displayString = "<h3>" + locationObj.address.where + "</h3>" + '<ul style="list-style: none; padding-left: 10px;">'+
+		var displayString = "<h3 style='padding-left: 10px;'>" + locationObj.address.where + "</h3>" + '<ul style="list-style: none; padding-left: 10px;">'+
 			'<li>' + locationObj.address.what + '</li>' +
 			'<li>' + locationObj.address.when + '</li>';
 
@@ -442,13 +442,45 @@ histViewerMap.controller('testController', ['$scope', 'DatabaseControlService', 
 
 			//create new marker and overwrite
 
-			$scope.descriptions[j] = "<h3>" + places[0][j].where + "</h3>";
-			$scope.descriptions[j] += "<a onclick='markerLinkClicked(" + j + ");'>" +places[0][j].who + " " + places[0][j].what + "</a></br>";
-			$scope.descriptions[j] +=  "<a onclick='markerLinkClicked(" + i + ");'>" +places[0][i].who + " " + places[0][i].what + "</a></br>";
+			$scope.descriptions[j] = "<h3 style='padding-left:10px;'>" + places[0][j].where + "</h3>";
+			$scope.descriptions[j] += "<a style='padding-left:10px;' onclick='markerLinkClicked(" + j + ");'>" +places[0][j].who + " " + places[0][j].what + "</a></br>";
+			$scope.descriptions[j] +=  "<a style='padding-left:10px;' onclick='markerLinkClicked(" + i + ");'>" +places[0][i].who + " " + places[0][i].what + "</a></br>";
 
 			$scope.infoWindowMulti = new google.maps.InfoWindow({
 				pane: "mapPane",
 				enableEventPropagation: false
+			});
+
+			google.maps.event.addListener($scope.infoWindowMulti, 'domready', function() {
+				var iwOuter = $('.gm-style-iw');
+				var iwBackground = iwOuter.prev();
+
+				iwBackground.children(':nth-child(2)').css({'display' : 'none'});
+				iwBackground.children(':nth-child(4)').css({'display' : 'none'});
+
+				var iwCloseBtn = iwOuter.next();
+
+				iwOuter.prev().children(':nth-child(3)').children(':nth-child(1)').css({
+					'z-index': 2
+				});
+				iwOuter.prev().children(':nth-child(3)').children(':nth-child(2)').css({
+					'z-index': 2
+				});
+
+				iwCloseBtn.css({
+					width: '15px',
+					height: '15px',
+					opacity: '1',
+					right: '28px',
+					top: '10px',
+					border: '1px solid #48b5e9',
+					'border-radius': '13px',
+					'box-shadow': '0 0 5px #3990B9'
+				});
+
+				iwCloseBtn.mouseout(function(){
+					$(this).css({opacity: '1'});
+				});
 			});
 
 			$scope.marker = new google.maps.Marker({
@@ -460,7 +492,7 @@ histViewerMap.controller('testController', ['$scope', 'DatabaseControlService', 
 
 			google.maps.event.addListener($scope.marker,'click',(function(marker, j) {
 				return function() {
-					$scope.infoWindowMulti.setContent($scope.descriptions[j]);
+					$scope.infoWindowMulti.setContent($scope.descriptions[j] + "<div style='padding-bottom:5px;'></div>");
 					$scope.infoWindowMulti.open($scope.map, marker);
 				}
 			})($scope.marker, j));
@@ -478,11 +510,43 @@ histViewerMap.controller('testController', ['$scope', 'DatabaseControlService', 
 		}else{
 
 
-			$scope.descriptions[j] += "<a onclick='markerLinkClicked(" + i + ");'>" +places[0][i].who + " " + places[0][i].what + "</a></br>";
+			$scope.descriptions[j] += "<a style='padding-left:10px;' onclick='markerLinkClicked(" + i + ");'>" +places[0][i].who + " " + places[0][i].what + "</a></br>";
 
 			$scope.infoWindowMulti = new google.maps.InfoWindow({
 				pane: "mapPane",
 				enableEventPropagation: false
+			});
+
+			google.maps.event.addListener($scope.infoWindowMulti, 'domready', function() {
+				var iwOuter = $('.gm-style-iw');
+				var iwBackground = iwOuter.prev();
+
+				iwBackground.children(':nth-child(2)').css({'display' : 'none'});
+				iwBackground.children(':nth-child(4)').css({'display' : 'none'});
+
+				var iwCloseBtn = iwOuter.next();
+
+				iwOuter.prev().children(':nth-child(3)').children(':nth-child(1)').css({
+					'z-index': 2
+				});
+				iwOuter.prev().children(':nth-child(3)').children(':nth-child(2)').css({
+					'z-index': 2
+				});
+
+				iwCloseBtn.css({
+					width: '15px',
+					height: '15px',
+					opacity: '1',
+					right: '28px',
+					top: '10px',
+					border: '1px solid #48b5e9',
+					'border-radius': '13px',
+					'box-shadow': '0 0 5px #3990B9'
+				});
+
+				iwCloseBtn.mouseout(function(){
+					$(this).css({opacity: '1'});
+				});
 			});
 
 			$scope.marker = new google.maps.Marker({
@@ -494,7 +558,7 @@ histViewerMap.controller('testController', ['$scope', 'DatabaseControlService', 
 			google.maps.event.addListener($scope.marker,'click',(function(marker, j) {
 				return function() {
 
-					$scope.infoWindowMulti.setContent($scope.descriptions[j]);
+					$scope.infoWindowMulti.setContent($scope.descriptions[j] + "<div style='padding-bottom:5px;'></div>");
 					$scope.infoWindowMulti.open($scope.map, marker);
 				}
 			})($scope.marker, j));
@@ -516,13 +580,45 @@ histViewerMap.controller('testController', ['$scope', 'DatabaseControlService', 
 
 			//create new marker and overwrite
 
-			$scope.descriptions[j] = "<h3>" + places[0][j].where + "</h3>";
-			$scope.descriptions[j] += "<a onclick='markerLinkClicked(" + j + ");'>" + $scope.filteredPlaces[j].address.who + " " + $scope.filteredPlaces[j].address.what + "</a></br>";
-			$scope.descriptions[j] +=  "<a onclick='markerLinkClicked(" + i + ");'>" + $scope.filteredPlaces[i].address.who + " " + $scope.filteredPlaces[i].address.what + "</a></br>";
+			$scope.descriptions[j] = "<h3 style='padding-left: 10px;'>" + places[0][j].where + "</h3>";
+			$scope.descriptions[j] += "<a style='padding-left: 10px;' onclick='markerLinkClicked(" + j + ");'>" + $scope.filteredPlaces[j].address.who + " " + $scope.filteredPlaces[j].address.what + "</a></br>";
+			$scope.descriptions[j] +=  "<a style='padding-left: 10px;' onclick='markerLinkClicked(" + i + ");'>" + $scope.filteredPlaces[i].address.who + " " + $scope.filteredPlaces[i].address.what + "</a></br>";
 
 			$scope.infoWindowMulti = new google.maps.InfoWindow({
 				pane: "mapPane",
 				enableEventPropagation: false
+			});
+
+			google.maps.event.addListener($scope.infoWindowMulti, 'domready', function() {
+				var iwOuter = $('.gm-style-iw');
+				var iwBackground = iwOuter.prev();
+
+				iwBackground.children(':nth-child(2)').css({'display' : 'none'});
+				iwBackground.children(':nth-child(4)').css({'display' : 'none'});
+
+				var iwCloseBtn = iwOuter.next();
+
+				iwOuter.prev().children(':nth-child(3)').children(':nth-child(1)').css({
+					'z-index': 2
+				});
+				iwOuter.prev().children(':nth-child(3)').children(':nth-child(2)').css({
+					'z-index': 2
+				});
+
+				iwCloseBtn.css({
+					width: '15px',
+					height: '15px',
+					opacity: '1',
+					right: '28px',
+					top: '10px',
+					border: '1px solid #48b5e9',
+					'border-radius': '13px',
+					'box-shadow': '0 0 5px #3990B9'
+				});
+
+				iwCloseBtn.mouseout(function(){
+					$(this).css({opacity: '1'});
+				});
 			});
 
 			$scope.marker = new google.maps.Marker({
@@ -534,7 +630,7 @@ histViewerMap.controller('testController', ['$scope', 'DatabaseControlService', 
 
 			google.maps.event.addListener($scope.marker,'click',(function(marker, j) {
 				return function() {
-					$scope.infoWindowMulti.setContent($scope.descriptions[j]);
+					$scope.infoWindowMulti.setContent($scope.descriptions[j] + "<div style='padding-bottom:5px;'></div>");
 					$scope.infoWindowMulti.open($scope.map, marker);
 				}
 			})($scope.marker, j));
@@ -552,11 +648,43 @@ histViewerMap.controller('testController', ['$scope', 'DatabaseControlService', 
 		}else{
 
 
-			$scope.descriptions[j] += "<a onclick='markerLinkClicked(" + i + ");'>" + $scope.filteredPlaces[i].address.who + " " + $scope.filteredPlaces[i].address.what + "</a></br>";
+			$scope.descriptions[j] += "<a style='padding-left: 10px;' onclick='markerLinkClicked(" + i + ");'>" + $scope.filteredPlaces[i].address.who + " " + $scope.filteredPlaces[i].address.what + "</a></br>";
 
 			$scope.infoWindowMulti = new google.maps.InfoWindow({
 				pane: "mapPane",
 				enableEventPropagation: false
+			});
+
+			google.maps.event.addListener($scope.infoWindowMulti, 'domready', function() {
+				var iwOuter = $('.gm-style-iw');
+				var iwBackground = iwOuter.prev();
+
+				iwBackground.children(':nth-child(2)').css({'display' : 'none'});
+				iwBackground.children(':nth-child(4)').css({'display' : 'none'});
+
+				var iwCloseBtn = iwOuter.next();
+
+				iwOuter.prev().children(':nth-child(3)').children(':nth-child(1)').css({
+					'z-index': 2
+				});
+				iwOuter.prev().children(':nth-child(3)').children(':nth-child(2)').css({
+					'z-index': 2
+				});
+
+				iwCloseBtn.css({
+					width: '15px',
+					height: '15px',
+					opacity: '1',
+					right: '28px',
+					top: '10px',
+					border: '1px solid #48b5e9',
+					'border-radius': '13px',
+					'box-shadow': '0 0 5px #3990B9'
+				});
+
+				iwCloseBtn.mouseout(function(){
+					$(this).css({opacity: '1'});
+				});
 			});
 
 			$scope.marker = new google.maps.Marker({
@@ -568,7 +696,7 @@ histViewerMap.controller('testController', ['$scope', 'DatabaseControlService', 
 			google.maps.event.addListener($scope.marker,'click',(function(marker, j) {
 				return function() {
 
-					$scope.infoWindowMulti.setContent($scope.descriptions[j]);
+					$scope.infoWindowMulti.setContent($scope.descriptions[j] + "<div style='padding-bottom:5px;'></div>");
 					$scope.infoWindowMulti.open($scope.map, marker);
 				}
 			})($scope.marker, j));

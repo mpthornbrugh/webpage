@@ -218,8 +218,26 @@ body, html {
 	text-align: center;
 	color: rgb(230,230,230);
 	font-size: 20px;
+	font-weight: bold;
 	height: 1em;
 	width: 400px;
 	top: 5%;
 	left: calc(50% - 200px);
+}
+
+.imageHolder {
+	height: 200px;
+	width: 200px;
+	margin-bottom: 10px;
+	padding-left: calc(50% - 100px);
+}
+
+.imageHolder img {
+	border: 1px solid black;
+	height: 200px;
+	width: 200px;
+}
+
+.imageHolder img:hover {
+	border-radius: 50%;
 }

@@ -5,8 +5,10 @@ angular.module('databaseEntry.service', ['ngRoute'])
 
 		var apiUrl = "https://historicaldv.herokuapp.com/";
 		var allItems = [];
+		var allImages = [];
 		var queryData = [];
 		var dataPopulatedPromise;
+		var imagesPopulatedPromise;
 
 		function populateAllItems() {
 			return $http.get(apiUrl + "getItems").
@@ -14,6 +16,19 @@ angular.module('databaseEntry.service', ['ngRoute'])
 					allItems = data;
 				}).
 				error(function (err) {
+					alert("Error connecting to server: " + err);
+				});
+		}
+
+		function populateAllImages() {
+			return $http.get(apiUrl + "getImages")
+				.success(function (data) {
+					//for (var i = 0; i < data.length; i++) {
+					//	allImages[data[i].name] = data[i].url;
+					//}
+					allImages = data;
+				})
+				.error(function (err) {
 					alert("Error connecting to server: " + err);
 				});
 		}
@@ -79,11 +94,37 @@ angular.module('databaseEntry.service', ['ngRoute'])
 			});
 
 			request.success(function (data) {
+				var needsImageCreate = true;
+				for (var i = 0; i < allItems.length; i++) {
+					if (allItems[i].who == newItem.who) {
+						needsImageCreate = false;
+						break;
+					}
+				}
+				if (needsImageCreate) {
+					addImage(newItem.who);
+				}
 				populateAllItems();
 			});
 
 			return request;
 		};
+
+		function addImage(name) {
+			var request = $http({
+				method: "post",
+				url: apiUrl + "addImage",
+				data: {
+					tableName: "images",
+					name: name,
+					url:""
+				}
+			});
+
+			request.success(function (data) {
+
+			});
+		}
 
 		var updateItem = function (index, updatedItem) {
 			var request = $http({
@@ -120,8 +161,30 @@ angular.module('databaseEntry.service', ['ngRoute'])
 			return request;
 		};
 
+		var updateImage = function (updateImage) {
+			var request = $http({
+				method: "post",
+				url: apiUrl + "updateImage",
+				data:{
+					tableName: "images",
+					name:updateImage.name,
+					url: updateImage.url
+				}
+			});
+
+			request.success(function () {
+				populateAllImages();
+			});
+
+			return request;
+		};
+
 		var getItems = function () {
 			return allItems;
+		};
+
+		var getImages = function () {
+			return allImages;
 		};
 
 		var getQueryItems = function () {
@@ -133,6 +196,13 @@ angular.module('databaseEntry.service', ['ngRoute'])
 				dataPopulatedPromise = populateAllItems();
 			}
 			return dataPopulatedPromise;
+		};
+
+		var ensureImagesPopulated = function () {
+			if (!imagesPopulatedPromise) {
+				imagesPopulatedPromise = populateAllImages();
+			}
+			return imagesPopulatedPromise;
 		};
 
 		var removeItem = function (index) {
@@ -196,8 +266,11 @@ angular.module('databaseEntry.service', ['ngRoute'])
 			getItemByIndex:       getItemByIndex,
 			updateItem:           updateItem,
 			ensureDataPopulated:  ensureDataPopulated,
+			ensureImagesPopulated:ensureImagesPopulated,
 			queryForWho:          queryForWho,
 			queryForWhat:         queryForWhat,
-			writtenQuery:         writtenQuery
+			writtenQuery:         writtenQuery,
+			updateImage:          updateImage,
+			getImages:            getImages
 		};
 	}]);
