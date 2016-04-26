@@ -368,7 +368,7 @@
 	width: 18em !important;
 	height: 18em !important;
 	border: 1px solid black;
-	transition: background-image .2s ease-in-out;
+	transition: background-image .5s ease-in-out;
 }
 
 .bubble-center span {
@@ -473,7 +473,7 @@
 .back-button {
 	width: 248px;
 	height: 50px;
-	font-size:2.5em;
+	font-size:2em;
 	text-align:center;
 	background-color: lightgray;
 	border-radius:7.5%;

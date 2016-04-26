@@ -8,10 +8,11 @@
 		<div class="people-list">
 			<div ng-click="generateTimeline(person)" ng-repeat="person in people | filter: query" class="person-listing">
 				<div class="personImage">
-					<i class="fa fa-user"></i>
+					<i ng-if="person.url == ''" class="fa fa-user"></i>
+					<img ng-if="person.url != ''" ng-src="{{person.url}}" class="mainListingImage">
 				</div>
 				<div class="personInformation">
-					{{person}}
+					{{person.name}}
 				</div>
 			</div>
 		</div>

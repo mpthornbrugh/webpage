@@ -13,14 +13,27 @@ angular.module('histViewer.bubble', ['ngRoute'])
 		$scope.currentView = 'bubble';
 		//All the events should still be stored in the service.
 		$scope.allItems = DatabaseControlService.getItems();
+		//All the images should still be stored in the service.
+		var images = DatabaseControlService.getImages();
+		$scope.allImages = {};
 
 		$scope.goBackToTimeline = function () {
 			$location.path('/main');
 		};
 
-		var currentItem;
 		$scope.history = [];
-		var currentBubble;
+
+		function correctCapitalization(name) {
+			var newName = "";
+			var words = name.split(" ");
+			for (var i = 0; i < words.length; i++) {
+				var word = words[i].toLowerCase();
+				word = word.charAt(0).toUpperCase() + word.slice(1);
+				newName += word + " ";
+			}
+			newName = newName.substr(0, newName.length-1);
+			return newName;
+		}
 
 		function wildcard(str, rule) {
 			return new RegExp("^" + rule.replace("*", ".*") + "$").test(str);
@@ -73,8 +86,10 @@ angular.module('histViewer.bubble', ['ngRoute'])
 
 		function getEventById (id) {
 			for (var i in $scope.allItems) {
-				if ($scope.allItems[i].id == id) {
-					return $scope.allItems[i];
+				if ($scope.allItems.hasOwnProperty(i)) {
+					if ($scope.allItems[i].id == id) {
+						return $scope.allItems[i];
+					}
 				}
 			}
 			return {}; //Should never hit this case
@@ -177,6 +192,10 @@ angular.module('histViewer.bubble', ['ngRoute'])
 
 			//Do work on generating the background picture or some sort of picture
 			var centerDiv = document.getElementById("centerDiv");
+			if (currentItem.imgUrl != "") {
+				$scope.hasPicture = true;
+				centerDiv.setAttribute("style", "background-image:url('" + currentItem.imgUrl + "')");
+			}
 
 			$scope.centerBubbleText = currentItem.what;
 			//$scope.centerBubbleTitle = "WHAT";
@@ -231,6 +250,10 @@ angular.module('histViewer.bubble', ['ngRoute'])
 				var link = assocItems[i];
 				link.text = link.what;
 				link.class = "deg-" + degreeVals.startDegree;
+				var url = $scope.allImages[link.who];
+				if (url.length > 0) {
+					link.url = "url(" + url + ")";
+				}
 				degreeVals.startDegree += degreeVals.degreeSpacing;
 			}
 
@@ -241,17 +264,41 @@ angular.module('histViewer.bubble', ['ngRoute'])
 			};
 		}
 
-		if ($scope.allItems.length < 1) {
-			$(".se-pre-con").show();
-			DatabaseControlService.ensureDataPopulated().then(function () {
-				$scope.allItems = DatabaseControlService.getItems();
-				$(".se-pre-con").fadeOut("slow");
+		$scope.numReady = 0;
+
+		function readyUp() {
+			$scope.numReady++;
+			if ($scope.numReady > 1) {
+				for (var i = 0; i < $scope.allItems.length; i++) {
+					$scope.allItems[i].imgUrl = $scope.allImages[$scope.allItems[i].who];
+				}
 				generateAspectBubbles(parseInt($routeParams.id), false);
-			});
+			}
 		}
-		else {
-			generateAspectBubbles(parseInt($routeParams.id), false);
-		}
+
+		var load = $(".se-pre-con");
+
+		load.show();
+		DatabaseControlService.ensureDataPopulated().then(function () {
+			$scope.allItems = DatabaseControlService.getItems();
+			for (var i = 0; i < $scope.allItems.length; i++) {
+				$scope.allItems[i].who = correctCapitalization($scope.allItems[i].who);
+			}
+			load.fadeOut("slow");
+			readyUp();
+		});
+
+		load.show();
+		DatabaseControlService.ensureImagesPopulated().then(function () {
+			images = DatabaseControlService.getImages();
+			load.fadeOut("slow");
+			for (var i = 0; i < images.length; i++) {
+				var image = images[i];
+				var newName = correctCapitalization(image.name);
+				$scope.allImages[newName] = image.url;
+			}
+			readyUp();
+		});
 
 		//Calculate the font-size for the view
 		var container = document.getElementById("bubble-container");

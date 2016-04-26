@@ -2,12 +2,12 @@
 	<div id="bubble-container" class='bubble-container'>
 		<div id="centerDiv" class='center bubble-center' ng-click="poke(0)" style="display:flex;justify-content:center;align-items:center;">
 			<span class="centerBubbleTitle">{{centerBubbleTitle}}</span>
-			<i class="fa fa-user center-fa" style="width:100px;height:100px;font-size:100px;"></i>
+			<i ng-if="!hasPicture" class="fa fa-user center-fa" style="width:100px;height:100px;font-size:100px;"></i>
 			<span style="width:85%;padding-left:15%;">{{centerBubbleText}}</span>
 		</div>
 
 		<section ng-repeat="bubble in bubbles">
-			<div class="bubble-ring" ng-class="bubble.class" ng-click="bubbleClick($index)">
+			<div class="bubble-ring" ng-class="bubble.class" ng-click="bubbleClick($index)" ng-style="{'background-image': bubble.url }" style="background-size: cover">
 				<i class="fa bubble-fa-icon" ng-class="bubble.icon"></i>
 				<div class="bubbleTextContainer">
 					<span>{{bubble.text}}</span>

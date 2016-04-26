@@ -33,6 +33,8 @@ angular.module('histViewer.main', ['ngRoute'])
 
 		var totalTimelineEvents = [];
 
+		$scope.allImages = {};
+
 		var timelineEventLocations = [];
 		var numberShownEvents = 0;
 
@@ -65,7 +67,7 @@ angular.module('histViewer.main', ['ngRoute'])
 			numberShownEvents = 0;
 			$(".se-pre-con").show(); //Show the loading spinner
 			$scope.person = person;
-			DatabaseControlService.queryForWho(person.toUpperCase()).then(function () {//Load the data from the person selected
+			DatabaseControlService.queryForWho(person.name.toUpperCase()).then(function () {//Load the data from the person selected
 				var timelineEvents = DatabaseControlService.getQueryItems();
 				for (var i = 0; i < timelineEvents.length; i++) {
 					timelineEvents[i].who = correctCapitalization(timelineEvents[i].who);
@@ -83,10 +85,15 @@ angular.module('histViewer.main', ['ngRoute'])
 				$timeout(waitForRenderAndDoSomething); // Wait for all templates to be loaded
 			} else {
 				for (var i in totalTimelineEvents) {
-					removePersons(totalTimelineEvents[i]);
+					if (totalTimelineEvents.hasOwnProperty(i)) {
+						removePersons(totalTimelineEvents[i]);
+					}
 				}
 				if (totalTimelineEvents.length == 1) {
-					$scope.person = totalTimelineEvents[0][0].who;
+					$scope.person = {
+						"name":totalTimelineEvents[0][0].who,
+						"url":$scope.allImages[totalTimelineEvents[0][0].who]
+					};
 				}
 				createTimeline(totalTimelineEvents);
 			}
@@ -103,15 +110,22 @@ angular.module('histViewer.main', ['ngRoute'])
 
 		//This function is used to add people back into the listing on the left.
 		function addPersons(name) {
-			$scope.people.push(name);
+			var obj = {
+				"name": name,
+				"url": $scope.allImages[name]
+			};
+			$scope.people.push(obj);
 			//$scope.$apply();
 		}
 
 		//This function is used to remove the person's name from the listing on the left so that they cannot be selected twice.
 		function removePersons(event) {
-			var index = $scope.people.indexOf(event[0].who);
-			if (index > -1) {
-				$scope.people.splice(index, 1);
+			var checkName = event[0].who;
+			for (var i = 0; i < $scope.people.length; i++) {
+				if (checkName == $scope.people[i].name) {
+					$scope.people.splice(i, 1);
+					break;
+				}
 			}
 		}
 
@@ -151,7 +165,18 @@ angular.module('histViewer.main', ['ngRoute'])
 				"left": left
 			};
 
-			$(".eventCircle").each(function(i, obj) {
+			var evCirc = $(".eventCircle");
+
+			//the event circle is animated when the mouse is hover over it.
+			evCirc.hover(function(){
+				$(this).addClass('animated bounceIn');
+				$(this).css("background-color", "green");
+			}, function(){
+				$(this).removeClass('animated bounceIn');
+				$(this).css("background-color", "#ff3700");
+			});
+
+			evCirc.each(function(i, obj) {
 				var objPos = $(obj).position();
 				if (objPos.top == $scope.currentEventLocation.top) {
 					if (Math.abs(objPos.left - $scope.currentEventLocation.left) <= 15 ) {
@@ -165,7 +190,11 @@ angular.module('histViewer.main', ['ngRoute'])
 			});
 
 			var div = '<div class="eventCircle" id="event-' + numberShownEvents + '" style="top:' + topVal + 'px;left:' + left + 'px;">';
-			timelineEventLocations.push({numberShownEvents, xPos, timelineHeight, event});
+			timelineEventLocations.push({
+				numberShownEvents:numberShownEvents,
+				xPos:xPos, timelineHeight:timelineHeight,
+				event:event
+			});
 
 			var innerdiv = '<div class="timelinePopup" ';
 			if ((momentEvent.year() - minYear)/yearGap <= 2) { //Circle is within the first 2 timeline sections
@@ -241,13 +270,15 @@ angular.module('histViewer.main', ['ngRoute'])
 
 		//This function returns the lowest date out of all of the events.
 		function getMinDate(events) {
-			var minDate;
+			var minDate = -1;
 			for (var i in events) {
-				if (!minDate) {
-					minDate = moment(new Date(events[i].when));
-				}
-				else if (moment(new Date(events[i].when)) < minDate) {
-					minDate = moment(new Date(events[i].when));
+				if (events.hasOwnProperty(i)) {
+					if (minDate == -1) {
+						minDate = moment(new Date(events[i].when));
+					}
+					else if (moment(new Date(events[i].when)) < minDate) {
+						minDate = moment(new Date(events[i].when));
+					}
 				}
 			}
 			return minDate;
@@ -255,13 +286,15 @@ angular.module('histViewer.main', ['ngRoute'])
 
 		//This function returns the highest date out of all the events.
 		function getMaxDate(events) {
-			var maxDate;
+			var maxDate = -1;
 			for (var i in events) {
-				if (!maxDate) {
-					maxDate = moment(new Date(events[i].when));
-				}
-				else if (moment(new Date(events[i].when)) > maxDate) {
-					maxDate = moment(new Date(events[i].when));
+				if (events.hasOwnProperty(i)) {
+					if (maxDate == -1) {
+						maxDate = moment(new Date(events[i].when));
+					}
+					else if (moment(new Date(events[i].when)) > maxDate) {
+						maxDate = moment(new Date(events[i].when));
+					}
 				}
 			}
 			maxDate.add(1, 'years');
@@ -275,8 +308,10 @@ angular.module('histViewer.main', ['ngRoute'])
 			addPersons(name);
 
 			for (var i in totalTimelineEvents) {
-				if (totalTimelineEvents[i][0].who != name) {
-					newTotalEvents.push(totalTimelineEvents[i]);
+				if (totalTimelineEvents.hasOwnProperty(i)) {
+					if (totalTimelineEvents[i][0].who != name) {
+						newTotalEvents.push(totalTimelineEvents[i]);
+					}
 				}
 			}
 
@@ -311,7 +346,7 @@ angular.module('histViewer.main', ['ngRoute'])
 				"class": 'timelineImage'
 			});
 
-			div.on("click", function(e){
+			div.on("click", function(){
 				var curName = $(this).find('.timelineName').text();
 				removeFromTotalEvents(curName);
 				$scope.$apply();
@@ -321,25 +356,39 @@ angular.module('histViewer.main', ['ngRoute'])
 				"class": 'timelineImageMapIcon'
 			});
 
-			mapDiv.on("click", function(e) {
+			mapDiv.on("click", function() {
 				var curName = $(this).parent().find('.timelineName').text();
 				HistoryService.setTimelineHistory(totalTimelineEvents);
 				$location.path('/map/' + curName);
 			});
 
 			var fa = '<i class="fa fa-user"></i>';
+			var actualImg;
+
+			if (personName) {
+				actualImg = '<img class="timelineActualImg" src="' + $scope.allImages[personName] + '">';
+			}
+			else {
+				actualImg = '<img class="timelineActualImg" src="' + $scope.person.url + '">';
+			}
 
 			var faMap = '<i class="fa fa-globe"></i>';
 
-			div.append(fa);
+			div.append(actualImg);
 			mapDiv.append(faMap);
 
-			var person = '<p class="timelineName">';
+			var person;
+			if ($scope.person && $scope.person.url) {
+				person = '<p class="timelineName" style="margin-top:-14px">';
+			}
+			else {
+				person = '<p class="timelineName" style="margin-top:8px">';
+			}
 			if (personName) {
 				person += personName + '</p>';
 			}
 			else {
-				person += $scope.person + '</p>';
+				person += $scope.person.name + '</p>';
 			}
 
 			div.append(person);
@@ -364,12 +413,14 @@ angular.module('histViewer.main', ['ngRoute'])
 				arr[i] = 0;
 			}
 
-			for (var i in events) {
-				var eventYear = moment(new Date(events[i].when)).year();
-				arr[(eventYear - minYear)] += 1;
-				if (arr[(eventYear - minYear)] > 2) {
-					needsAdjustment = true;
-					break;
+			for (var j in events) {
+				if (events.hasOwnProperty(j)) {
+					var eventYear = moment(new Date(events[j].when)).year();
+					arr[(eventYear - minYear)] += 1;
+					if (arr[(eventYear - minYear)] > 2) {
+						needsAdjustment = true;
+						break;
+					}
 				}
 			}
 			if (needsAdjustment) {
@@ -403,17 +454,23 @@ angular.module('histViewer.main', ['ngRoute'])
 			var minDate = 9999;
 
 			for (var i in eventArrays) {
-				minDates.push(getMinDate(eventArrays[i]).year());
-			}
-
-			for (var i in minDates) {
-				if (minDate > minDates[i]) {
-					minDate = minDates[i];
+				if (eventArrays.hasOwnProperty(i)) {
+					minDates.push(getMinDate(eventArrays[i]).year());
 				}
 			}
 
-			for (var i in minDates) {
-				returnArr.push({"yearDiff": (minDates[i] - minDate)});
+			for (var j in minDates) {
+				if (minDates.hasOwnProperty(j)) {
+					if (minDate > minDates[j]) {
+						minDate = minDates[j];
+					}
+				}
+			}
+
+			for (var k in minDates) {
+				if (minDates.hasOwnProperty(k)) {
+					returnArr.push({"yearDiff": (minDates[k] - minDate)});
+				}
 			}
 
 			return returnArr;
@@ -425,7 +482,7 @@ angular.module('histViewer.main', ['ngRoute'])
 				var events = totalEvents[totalEvents.length - 1];
 				var cont = $("#timelineContainer");
 				var viewWidth = cont.width();
-				var viewHeight = cont.height();
+				//var viewHeight = cont.height();
 				var switchNum = (location ? location : 1);
 				var midlineHeight;
 
@@ -521,15 +578,15 @@ angular.module('histViewer.main', ['ngRoute'])
 				var lineWidth = blankAreaOnSideOfTimeline + (sectionsNeeded * 120);
 
 				DrawLine(blankAreaOnSideOfTimeline, midlineHeight, lineWidth, midlineHeight);
-				for (var i = 0; i <= sectionsNeeded; i++) {
-					DrawLine((blankAreaOnSideOfTimeline + (120 * i)), (midlineHeight - 20), (blankAreaOnSideOfTimeline + (120 * i)), (midlineHeight + 20));
-					drawText((blankAreaOnSideOfTimeline + (120 * i)), (midlineHeight + 28), "" + (minYear + (yearGap * i)) + "");
+				for (var secCount = 0; secCount <= sectionsNeeded; secCount++) {
+					DrawLine((blankAreaOnSideOfTimeline + (120 * secCount)), (midlineHeight - 20), (blankAreaOnSideOfTimeline + (120 * secCount)), (midlineHeight + 20));
+					drawText((blankAreaOnSideOfTimeline + (120 * secCount)), (midlineHeight + 28), "" + (minYear + (yearGap * secCount)) + "");
 				}
 
 				if (yearGap > 1) {
 					var tickSpacing = 120/yearGap;
-					for (var i = 0; i < sectionsNeeded; i++) {
-						var start = blankAreaOnSideOfTimeline + 120*i;
+					for (var k = 0; k < sectionsNeeded; k++) {
+						var start = blankAreaOnSideOfTimeline + 120*k;
 						for (var j = 1; j <= yearGap; j++) {
 							var x = start + (tickSpacing * j);
 							DrawLine(x, (midlineHeight - 10), x, (midlineHeight + 10), 1);
@@ -538,8 +595,10 @@ angular.module('histViewer.main', ['ngRoute'])
 				}
 
 				//Draw all of the events.
-				for (var i in events) {
-					drawEvent(events[i], yearGap, midlineHeight, minYear, maxYear, blankAreaOnSideOfTimeline);
+				for (var event in events) {
+					if (events.hasOwnProperty(event)) {
+						drawEvent(events[event], yearGap, midlineHeight, minYear, maxYear, blankAreaOnSideOfTimeline);
+					}
 				}
 			}
 			else if (totalEvents.length < 1) {
@@ -549,9 +608,11 @@ angular.module('histViewer.main', ['ngRoute'])
 				var values = calculateEventSeparations(totalEvents);
 
 				for (var i in values) {
-					var a = [];
-					a.push(totalEvents[i]);
-					createTimeline(a, parseInt(i)+1, totalEvents[i][0].who, (120 * Math.floor(values[i].yearDiff/2)), 2);
+					if (values.hasOwnProperty(i)) {
+						var a = [];
+						a.push(totalEvents[i]);
+						createTimeline(a, parseInt(i)+1, totalEvents[i][0].who, (120 * Math.floor(values[i].yearDiff/2)), 2);
+					}
 				}
 			}
 		}
@@ -561,24 +622,53 @@ angular.module('histViewer.main', ['ngRoute'])
 			var people = [];
 			var currentPerson = "";
 			for (var i in $scope.allItems) {
-				if (!currentPerson || $scope.allItems[i].who != currentPerson) {
-					currentPerson = $scope.allItems[i].who;
-					people.push(currentPerson);
+				if ($scope.allItems.hasOwnProperty(i)) {
+					if (!currentPerson || $scope.allItems[i].who != currentPerson) {
+						currentPerson = $scope.allItems[i].who;
+						var addItem = {
+							"name":currentPerson,
+							"url":$scope.allItems[i].imgUrl
+						};
+						people.push(addItem);
+					}
 				}
 			}
 			people = $.unique(people);
 			$scope.people = people;
 		}
 
+		$scope.count = 0;
+
+		function readyUp() {
+			$scope.count+=1;
+			if ($scope.count > 1) {
+				//Add urls to allItems
+				for (var i = 0; i < $scope.allItems.length; i++) {
+					$scope.allItems[i].imgUrl = $scope.allImages[$scope.allItems[i].who];
+				}
+				generatePeople();
+				checkHistory();
+				triggerClickScroll();
+				$(".se-pre-con").fadeOut("slow");
+			}
+		}
+
+		DatabaseControlService.ensureImagesPopulated().then(function () {
+			var images = DatabaseControlService.getImages();
+			for (var i = 0; i < images.length; i++) {
+				var image = images[i];
+				var newName = correctCapitalization(image.name);
+				$scope.allImages[newName] = image.url;
+			}
+			readyUp();
+		});
+
 		DatabaseControlService.ensureDataPopulated().then(function () {
 			$scope.allItems = DatabaseControlService.getItems();
 			for (var i = 0; i < $scope.allItems.length; i++) {
 				$scope.allItems[i].who = correctCapitalization($scope.allItems[i].who);
 			}
-			generatePeople();
-			checkHistory();
-			triggerClickScroll();
-			$(".se-pre-con").fadeOut("slow");
+			readyUp();
 		});
 
 		//Create variables in order to access certain DOM elements
