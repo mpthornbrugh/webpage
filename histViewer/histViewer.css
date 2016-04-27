@@ -135,7 +135,6 @@ body, html {
 
 .timelinePopup {
 	position: absolute;
-	height: 120px;
 	width: 300px;
 	font-size: 16px;
 	background: beige;
@@ -190,6 +189,7 @@ body, html {
 }
 
 .startDate {
+	font-size: 11px;
 	position: absolute;
 	top: calc(100% - 72px);
 	left: 83%;
@@ -203,6 +203,7 @@ body, html {
 }
 
 .endDate {
+	font-size: 11px;
 	position: absolute;
 	top: calc(100% - 47px);
 	left: 83%;

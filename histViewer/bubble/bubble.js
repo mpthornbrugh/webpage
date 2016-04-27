@@ -4,9 +4,9 @@ angular.module('histViewer.bubble', ['ngRoute'])
 
 	.config(['$routeProvider', function ($routeProvider) {
 		$routeProvider.when('/bubble/:id', {
-				templateUrl: 'bubble/bubble.html',
-				controller: 'BubbleCtrl'
-			});
+			templateUrl: 'bubble/bubble.html',
+			controller: 'BubbleCtrl'
+		});
 	}])
 
 	.controller('BubbleCtrl', ['$scope', 'DatabaseControlService', 'HistoryService', '$location', '$routeParams', function ($scope, DatabaseControlService, HistoryService, $location, $routeParams) {
