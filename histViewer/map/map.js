@@ -9,7 +9,7 @@ histViewerMap.config(['$routeProvider', function ($routeProvider) {
 	});
 }]);
 
-histViewerMap.controller('testController', ['$scope', 'DatabaseControlService', '$location', '$routeParams', function ($scope, DatabaseControlService, $location, $routeParams) {
+histViewerMap.controller('testController', ['$scope', 'DatabaseControlService', 'HistoryService', '$location', '$routeParams', function ($scope, DatabaseControlService, HistoryService, $location, $routeParams) {
 	$(".se-pre-con").hide();
 
 	$scope.currentView = 'map';
@@ -53,7 +53,14 @@ histViewerMap.controller('testController', ['$scope', 'DatabaseControlService', 
 
 
 	$scope.hideMap = function () {
-		$location.path("/main");
+		var lastMap = HistoryService.getLastView();
+		if (lastMap && lastMap != 'timeline') {
+			var lastBubble = HistoryService.getLastBubble();
+			$location.path("/bubble/" + lastBubble);
+		}
+		else {
+			$location.path("/main");
+		}
 	};
 
 	$scope.setStartDate = function () {

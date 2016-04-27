@@ -9,7 +9,7 @@ angular.module('histViewer.bubble', ['ngRoute'])
 			});
 	}])
 
-	.controller('BubbleCtrl', ['$scope', 'DatabaseControlService', '$location', '$routeParams', function ($scope, DatabaseControlService, $location, $routeParams) {
+	.controller('BubbleCtrl', ['$scope', 'DatabaseControlService', 'HistoryService', '$location', '$routeParams', function ($scope, DatabaseControlService, HistoryService, $location, $routeParams) {
 		$scope.currentView = 'bubble';
 		//All the events should still be stored in the service.
 		$scope.allItems = DatabaseControlService.getItems();
@@ -56,10 +56,13 @@ angular.module('histViewer.bubble', ['ngRoute'])
 
 		function getAssociatedItems(currItem, type) {
 			if (type.toLowerCase() == "where") {
+				HistoryService.setLeavingView('bubble');
+				HistoryService.setLastBubble(currItem.id);
 				$location.path("/map/" + currItem.who);
 			}
 			var items = [];
 			var currItemMoment = moment(new Date(currItem.when));
+			var currYear = currItemMoment.year();
 			$scope.allItems.forEach(function(item) {
 				switch (type.toLowerCase()) {
 					case "who":
@@ -70,7 +73,8 @@ angular.module('histViewer.bubble', ['ngRoute'])
 						break;
 					case "when":
 						var thisMomentDate = moment(new Date(item.when));
-						if ((thisMomentDate.diff(currItemMoment)) < 31557600000) {
+						var thisYear = thisMomentDate.year();
+						if (Math.abs(currYear - thisYear) < 6) {
 							items.push(item);
 						}
 						break;
@@ -223,6 +227,8 @@ angular.module('histViewer.bubble', ['ngRoute'])
 
 		function generateAssocBubbles(eventId, updateHistory, type) {
 			if (type.toLowerCase() == "where") {
+				HistoryService.setLeavingView('bubble');
+				HistoryService.setLastBubble(eventId);
 				$location.path("/map/" + getEventById(eventId).who);
 				return;
 			}
