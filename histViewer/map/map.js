@@ -397,8 +397,15 @@ histViewerMap.controller('testController', ['$scope', 'DatabaseControlService', 
 
 			if($scope.latlngnum == 1){
 				$scope.map.setCenter($scope.latlng[0]);
+				$scope.map.setZoom(12);
 			}else{
 				$scope.map.fitBounds(latlngbounds);
+
+				var setZoom = new google.maps.event.addListener($scope.map, "idle", function(){
+					if($scope.map.getZoom() >= 13){
+						$scope.map.setZoom(12);
+					}
+				});
 			}
 		}
 	}
@@ -426,8 +433,16 @@ histViewerMap.controller('testController', ['$scope', 'DatabaseControlService', 
 
 			if($scope.latlngnum == 1){
 				$scope.map.setCenter($scope.latlng[0]);
+				$scope.map.setZoom(12);
 			}else{
 				$scope.map.fitBounds(latlngbounds);
+
+				var setZoom = new google.maps.event.addListener($scope.map, "idle", function(){
+					if($scope.map.getZoom() >= 13){
+						$scope.map.setZoom(12);
+					}
+				});
+
 			}
 		}
 	}
