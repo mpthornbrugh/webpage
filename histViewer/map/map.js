@@ -27,6 +27,7 @@ histViewerMap.controller('testController', ['$scope', 'DatabaseControlService', 
 
 	var places = [];
 	var address = "";
+	var bubbleId;
 
 	var mapOfWho = $routeParams.who;
 	if (mapOfWho == "") {
@@ -35,6 +36,10 @@ histViewerMap.controller('testController', ['$scope', 'DatabaseControlService', 
 	$scope.title = $routeParams.who;
 
 	DatabaseControlService.queryForWho(mapOfWho.toUpperCase()).then(function () {//Load the data from the place selected
+		bubbleId = HistoryService.getLastBubble();
+		if (bubbleId && bubbleId > -1) {
+
+		}
 		initialize();
 		var mapItems = DatabaseControlService.getQueryItems();
 
@@ -398,7 +403,16 @@ histViewerMap.controller('testController', ['$scope', 'DatabaseControlService', 
 			if($scope.latlngnum == 1){
 				$scope.map.setCenter($scope.latlng[0]);
 				$scope.map.setZoom(12);
-			}else{
+			}
+			else if (bubbleId && bubbleId > -1) {
+				for (var k = 0; k < $scope.locations.length; k++) {
+					if ($scope.locations[k]["address"]["id"] == bubbleId) {
+						$scope.map.setCenter($scope.latlng[k]);
+						break;
+					}
+				}
+			}
+			else{
 				$scope.map.fitBounds(latlngbounds);
 
 				var setZoom = new google.maps.event.addListener($scope.map, "idle", function(){
@@ -455,7 +469,7 @@ histViewerMap.controller('testController', ['$scope', 'DatabaseControlService', 
 		$scope.markers[index].addListener('click', function () {
 			$scope.infoWindowMulti.open($scope.map, this);
 		});
-	}
+	};
 
 	function consolidateMarkers(i, j){
 

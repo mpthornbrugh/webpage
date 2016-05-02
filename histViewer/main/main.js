@@ -360,6 +360,7 @@ angular.module('histViewer.main', ['ngRoute'])
 				var curName = $(this).parent().find('.timelineName').text();
 				HistoryService.setTimelineHistory(totalTimelineEvents);
 				HistoryService.setLeavingView('timeline');
+				HistoryService.setLastBubble(-1);
 				$location.path('/map/' + curName);
 			});
 
